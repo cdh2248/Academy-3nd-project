@@ -1,0 +1,100 @@
+/* 모임카드 스킨 */
+.invite .left_contents dl.ai_card.design{ padding-top:85px !important; min-width: 700px }
+
+
+.invite .left_contents .ai_card dd.footer{  position: absolute; top:0; left: 10px; width: 100%; min-width: 400px; background: #fff; z-index: 99; border-bottom:solid 2px rgba(0,0,0,.6); box-sizing: border-box;  text-align: left; padding:10px 0 10px 45px; border-top:0 }
+
+.invite .left_contents .ai_card dd.footer h3{float: left; height: 40px;  width: 100%; overflow: hidden;  }
+.invite .left_contents .ai_card dd.footer button{ margin:2px 10px 0 0 }
+.invite .left_contents dl.ai_card dd.footer button{ float: left; border-color:rgba(0,153,0,.5); color: #009900; padding:1px 10px; font-size: 16px  }
+
+.invite dl.ai_card .a_type{ }
+.invite dl ai_card .b_type{ }
+.invite dl.ai_card .c_type{ }
+.invite dl.ai_card .d_type{ }
+.invite dl.ai_card .e_type{ }
+
+.ai_card label{  }
+.ai_card label b{ display: inline-block; width:9%; min-width:56px; vertical-align: top }
+.ai_card label input[type=text], .ai_card label input[type=date], .ai_card label input[type=time]
+{ display: inline-block; background:rgba(0,210,255,.06); border:solid 1px rgba(0,0,0,.4); border-radius:3px; padding:2px; color: rgba(0,0,0,.9); margin:0 1% 4px 0 }
+
+.ai_card h2 label{  }
+.ai_card h2 label b{ letter-spacing: 3px; }
+.ai_card h2 label input[type=text]{ width:88.5%; font:500 20px/24px 'Noto Sans KR',Sans-serif; min-width:100px;display: inline-block; }
+/*모임카드  반응형 처리 */
+@media(max-width:1620px){
+.ai_card h2 label input[type=text]{ width:70% }
+
+}
+
+.ai_card .form_info .date{ flex-direction:row; justify-content: space-between;  align-items: center; word-wrap: break-word; margin:5px 0 }
+.ai_card .form_info .date label{ width: 30%; flex:1 1 auto }
+.ai_card .form_info .date label:nth-child(2) input[type=text]{  }
+.ai_card .form_info .date label b{  }
+.ai_card .form_info .date label input{ }
+.ai_card .form_info .skin b{ display: inline-block; width:9%; min-width:56px; vertical-align: top }
+.ai_card .form_info .people label input[type=text]{ width:88%; }
+.ai_card .form_info{ }
+
+.ai_card .form_info .memo textarea{ width: 87%; margin: 0; background:rgba(0,210,255,.06); border:solid 1px rgba(0,0,0,.4); border-radius:3px; min-height: 50px }
+.ai_card .form_info .skin{ padding:3px 0 10px 0;}
+
+/* ====================================
+    디자인 카드 스킨
+=======================================*/
+
+
+.invite.design .card_list_wrap{ width: 100%; display: flex; flex-wrap: wrap; justify-content: center; flex-direction:row;  word-wrap: break-word; }
+
+.ai_card_skin{ position: relative; background: #fff; width:48%;  margin:0  1% 20px 1%; padding: 0 2%;  border-radius: 5px }
+.ai_card_skin:after{ content:""; display: block; clear:both; }
+
+.ai_card_skin > dt.header{ min-height: 120px; color: #fff; font:500 16px/26px 'Noto Sans KR',Sans-serif; text-align: center;  display: flex;justify-content: center;align-items: center; text-shadow: 3px 2px 2px rgba(0,0,0,.5); letter-sapcing:0.5px }
+.ai_card_skin > dd.body{ background: #fff; min-height: 180px; border-radius: 5px;  display: flex;justify-content: center;align-items: center; }
+.ai_card_skin > dd.body > input[type=radio]{ width: 20px; height: 20px; font:600 30px/30px 'Noto Sans KR',Sans-serif; color: rgba(0,0,0,.2); text-align: center;  }
+.ai_card_skin > dd.footer{ color:rgba(255,255,255,.7); font:400 12px/30px 'Noto Sans KR',Sans-serif; text-align: center }
+
+.right_contents.area .ai_card_skin dd.body > label{ font:600 30px/30px 'Noto Sans KR',Sans-serif; color: rgba(0,0,0,.4) }
+
+.ai_card_skin.a_type{ background:#052238 url("../images/bg0.png") }
+.ai_card_skin.b_type{ background:#232323 url("../images/bg_04.jpg") no-repeat top; background-size: 100%  }
+.ai_card_skin.c_type{ background:#232323 url("../images/bg_05.jpg") no-repeat top; background-size: 100% }
+.ai_card_skin.d_type{ background:#0f5132 url("../images/bg_06.jpg") no-repeat top; background-size: 100%  }
+.ai_card_skin.e_type{ background:#000000 url("../images/bg3.png") }
+.ai_card_skin.f_type{ background:#232323 url("../images/bg_03.jpg") no-repeat top; background-size: 100%  }
+.ai_card_skin.g_type{ background:#009900 url("../images/bg4.png") }
+.ai_card_skin.h_type{ background:#0c4128 url("../images/bg_01.jpg") no-repeat top; background-size: 100%  }
+
+/* ===================================
+모달 레이어 HTML 스타일 제거 - 이미지 다운로드용으로 재편집
+====================================== */
+.modal_layer_wrap.card .layer_contents{ padding:0 10px }
+.modal_layer_wrap.card .ai_card_skin{  margin: 0 auto; }
+.modal_layer_wrap.card .ai_card.design{ border: 0; border-radius: 0 }
+.modal_layer_wrap.card .ai_card{ box-shadow: none; margin:10px auto }
+.modal_layer_wrap.card .ai_card label{ color: rgba(0,0,0,.8) }
+.modal_layer_wrap.card .ai_card label b{ min-width: 70px }
+.modal_layer_wrap.card .ai_card label input[type=text],
+.modal_layer_wrap.card .ai_card label input[type=date],
+.modal_layer_wrap.card .ai_card label input[type=time]
+{ background:none; border:none; border-radius:0; padding:0px; margin: 0; font:500 18px/22px 'Noto Sans KR',Sans-serif;  }
+.modal_layer_wrap.card .layer_contents > h1{ font:400 18px/24px 'Noto Sans KR',Sans-serif; color: rgba(255,255,255,.8); padding: 0 3px 10px 5px }
+.modal_layer_wrap.card .layer_contents > h1 a.download{ display: inline-block;background:#009900; color: #fff; padding: 3px 10px; text-align: center; font:500 16px/24px 'Noto Sans KR',Sans-serif; border-radius: 3px;  }
+
+.modal_layer_wrap.card .ai_card_skin{ width: 100% }
+.modal_layer_wrap.card .ai_card label input:nth-child(2),
+.modal_layer_wrap.card .ai_card label input[type=time]{ width: 130px }
+.modal_layer_wrap.card .ai_card h2{ text-align: center; display: block; height: 60px }
+.modal_layer_wrap.card .ai_card_skin > dt.header { min-height: 120px; color: #fff; font: 500 30px/40px 'Noto Sans KR',Sans-serif; }
+.modal_layer_wrap.card .ai_card .card_list .summary_card li{ font-size: 13px }
+.modal_layer_wrap.card .ai_card .card_list .summary_card li:nth-child(1){ font-size: 20px }
+
+
+.modal_layer_wrap.card .ai_card h2 label b{ display: none }
+/* .modal_layer_wrap.card .ai_card .date label:nth-child(3){ width: 100%; display: block; } */
+.modal_layer_wrap.card .ai_card h2 label input[type=text]{ width:90%; margin:0 auto 0; font:600 30px/40px 'Noto Sans KR',Sans-serif; text-align: center }
+.modal_layer_wrap.card .ai_card .form_info .memo textarea{ min-height:70px; border: solid 1px rgba(0,0,0,.2); font:500 14px/22px 'Noto Sans KR',Sans-serif; color:rgba(0,0,0,.7); }
+.modal_layer_wrap.card .ai_card .form_info .memo textarea::placeholder{ display: none; font-size: 0 }
+.modal_layer_wrap.card .ai_card input[type=checkbox]{ display: none }
+.modal_layer_wrap.card a.place_info_layer{ display: none }

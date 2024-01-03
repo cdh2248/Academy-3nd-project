@@ -1,0 +1,182 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/ck2.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .field-error {
+            margin-left: 5px;
+            text-align: left;
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div id="container" class="container">
+    <!-- FORM SECTION -->
+    <div class="row">
+        <!-- SIGN UP -->
+
+        <div class="col align-items-center flex-col sign-up">
+            <div class="form-wrapper align-items-center">
+                <div class="form sign-up">
+                    <form th:action="${join}" th:object="${client}" method="post">
+                    <div th:if="${#fields.hasGlobalErrors()}">
+                        <p class="field-error" th:each="err : ${#fields.hasGlobalErrors()}" th:text="${err}">전체 오류 메시지</p>
+                    </div>
+                    <div class="input-group">
+                        <i class='bx bxs-user'></i>
+                        <input type="text" th:field="*{clientId}" placeholder="로그인 ID">
+                        <div class="field-error" th:errors="*{clientId}"></div>
+                    </div>
+                    <div class="input-group">
+                        <i class='bx bx-mail-send'></i>
+                        <input type="email" th:field="*{clientEmail}" placeholder="이메일">
+                        <div class="field-error" th:errors="*{clientEmail}"></div>
+                    </div>
+                    <div class="input-group">
+                        <i class='bx bxs-lock-alt'></i>
+                        <input type="password" th:field="*{password}" placeholder="비밀번호">
+                        <div class="field-error" th:errors="*{password}"></div>
+                    </div>
+                    <div class="input-group">
+                        <i class='bx bxs-lock-alt'></i>
+                        <input type="password" th:field="*{password2}" placeholder="비밀번호 재확인">
+                        <div class="field-error" th:errors="*{password2}"></div>
+                    </div>
+<!--                        -->
+                        <div class="join_checkbox" style="text-align: left">
+                            <label style="font-size: larger; color: dimgrey">관심 장소</label>
+                            <br>
+                            <!-- 변경 -->
+                            <div th:each="item, iterStat : ${regionCheckbox}" style="display: inline-flex; margin-left: 30px; width: 90px !important;" >
+                                <label th:for="${#strings.concat('checkbox', item)}">
+                                    <input type="checkbox" th:id="${#strings.concat('checkbox', item)}" th:name="selectedItems" th:value="${item}">
+                                    <span th:text="${item}" th:width="50px"></span>
+                                </label>
+                                <!-- 각 행의 끝에 <br> 태그를 추가 -->
+                                <span th:if="${iterStat.count % 3 == 0}"><br></span>
+                            </div>
+                        </div>
+
+                        <div class="join_checkbox" style="text-align: left">
+                            <label style="font-size: larger; color: dimgrey">관심 분야</label>
+                            <br>
+                            <!-- 변경 -->
+                            <div th:each="item, iterStat : ${interestCheckbox}" style="display: inline-flex; margin-left: 30px; width: 90px !important" >
+                                <label th:for="${#strings.concat('checkbox', item)}" style="width: 90px;" >
+                                    <input type="checkbox" th:id="${#strings.concat('checkbox', item)}" th:name="selectedItems" th:value="${item}">
+                                    <span th:text="${item}" th:width="50px"></span>
+                                </label>
+                                <!-- 각 행의 끝에 <br> 태그를 추가 -->
+                                <span th:if="${iterStat.count % 3 == 0}"><br></span>
+                            </div>
+                        </div>
+                        <br>
+<!--                        -->
+                    <button type="submit">
+                        회원가입
+                    </button>
+                    <p>
+              <span>
+                이미 계정이 있으신가요?
+              </span>
+                    <b th:onclick="|location.href='@{/client/login}'|" class="pointer">로그인으로!</b>
+<!--                        <b th:onclick="@{/client/login}" class="pointer">-->
+<!--&lt;!&ndash;                        <b onclick="toggle()" class="pointer">&ndash;&gt;-->
+<!--                            로그인으로-->
+<!--                        </b>-->
+                    </p>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <!-- END SIGN UP -->
+        <!-- 로그인 -->
+        <div class="col align-items-center flex-col sign-in">
+            <div class="form-wrapper align-items-center">
+                <div class="form sign-in">
+                    <form >
+                    <div class="input-group">
+                        <i class='bx bxs-user'></i>
+                        <input type="text"  placeholder="로그인 ID">
+                    </div>
+                    <div class="input-group">
+                        <i class='bx bxs-lock-alt'></i>
+                        <input type="password"  placeholder="비밀번호">
+                    </div>
+                    <button >
+                        로 그 인
+                    </button>
+                    <p>
+                        <b>
+                            비밀번호를 잊어버리셨나요?
+                        </b>
+                    </p>
+                    <p>
+              <span>
+                아직 계정이 없으신가요?
+              </span>
+                        <b th:onclick="@{/client/join}" class="pointer">
+<!--                        <b onclick="toggle()" class="pointer">-->
+                            회원가입은 여기!
+                        </b>
+                    </p>
+                    </form>
+                </div>
+            </div>
+            <div class="form-wrapper">
+
+            </div>
+        </div>
+        <!-- END 로그인 -->
+    </div>
+    <!-- END FORM SECTION -->
+    <!-- CONTENT SECTION -->
+    <div class="row content-row">
+        <!-- SIGN IN CONTENT -->
+        <div class="col align-items-center flex-col">
+            <div class="text sign-in">
+                <h2>
+                    Welcome!!
+                </h2>
+
+            </div>
+            <div class="img sign-in">
+
+            </div>
+        </div>
+        <!-- END SIGN IN CONTENT -->
+        <!-- SIGN UP CONTENT -->
+        <div class="col align-items-center flex-col">
+            <div class="img sign-up">
+
+            </div>
+            <div class="text sign-up">
+                <h2>
+                    Let's party with us
+                </h2>
+
+            </div>
+        </div>
+        <!-- END SIGN UP CONTENT -->
+    </div>
+    <!-- END CONTENT SECTION -->
+</div>
+<script>
+let container = document.getElementById('container')
+
+toggle = () => {
+container.classList.toggle('sign-in')
+container.classList.toggle('sign-up')
+}
+
+setTimeout(() => {
+container.classList.add('sign-up')
+}, 100)
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<div class="header_wrap">
+        <header>
+            <h1 class="logo"><a href="/">Party People</a></h1>
+        </header>
+
+        <form id="search-form" th:action="place" method="post">
+            <div class="page_search">
+                <input type="text" id="search-in" name="searchForm" placeholder="[인천] 장소, 상호명 검색" autofocus><!--
+                 --><input type="submit" value="" class="fa fa-search">
+                <button type="button" id="clear-button" class="clear-button">X</button>
+
+<!--                </form>-->
+            </div>
+            <dl class="search_keword"> <!-- 최다 빈도수 키워드 10개만 나오게 해주세요 -->
+                <dt><a href="#" onclick="sendCategory('전체')">인천시 <b>AI추천</b> 키워드</a></dt>
+                <dd class="관광"><a href="#"  class="active" onclick="sendCategory('관광')"><i class="fa-solid fa-map-location-dot"></i> <span>관광</span></a></dd>
+                <dd class="전시"><a href="#" onclick="sendCategory('전시')"><i class="fa-solid fa-landmark"></i> <span>전시</span></a></dd>
+                <dd class="자연"><a href="#" onclick="sendCategory('자연')"><i class="fa-solid fa-mountain-sun"></i> <span>자연</span></a></dd><br>
+                <dd class="레저"><a href="#" onclick="sendCategory('레저')"><i class="fa-solid fa-person-hiking"></i> <span>레저</span></a></dd>
+                <dd class="쇼핑"><a href="#" onclick="sendCategory('쇼핑')"><i class="fa-brands fa-shopify"></i> <span>쇼핑</span></a></dd>
+                <dd class="음식"><a href="#" onclick="sendCategory('음식')"><i class="fa-solid fa-utensils"></i> <span>음식</span></a></dd>
+                <dd class="숙박"><a href="#" onclick="sendCategory('숙박')"><i class="fa-solid fa-bed"></i> <span>숙박</span></a></dd>
+<!--                <dd><a href="#">월미도바이킹</a></dd>-->
+<!--                <dd><a href="#">점심메뉴</a></dd>-->
+<!--                <dd><a href="#">8000원</a></dd>-->
+            </dl>
+        </form>
+    </div>
+
+<!-- post 보내는곳 -->
+<form id="categoryForm" action="/place" method="post">
+    <input type="hidden" id="categorySubject" name="categorySubject">
+</form>
+
+
+
+<script th:inline="javascript">
+
+    function sendCategory(category) {
+        function saveSessionQuery(query) {
+            sessionStorage.setItem("searchQuery", query);
+        }
+        saveSessionQuery("");
+
+        document.getElementById('categorySubject').value = category;
+        document.getElementById('categoryForm').submit();
+        console.log('삼성물산11층돌파기원')
+    }
+
+    var category2 = [[${category2}]];
+    console.log(category2);
+    function activeCategoryLnb(category2){
+        $('dd a').removeClass('active');
+        $('dd.'+category2+ ' a').addClass('active')
+    }
+    activeCategoryLnb(category2)
+
+    // 페이지 로딩 시 실행되는 함수
+    window.onload = function() {
+        const searchInput = document.getElementById("search-in");
+        const clearButton = document.getElementById("clear-button");
+        const searchForm = document.getElementById("search-form");
+
+        // 검색창의 값이 있으면 폼의 value로 설정
+        const savedQuery = getSessionSavedQuery();
+        if (savedQuery) {
+            searchInput.value = savedQuery;
+            updateClearButtonVisibility();
+        }
+
+        // X 버튼을 클릭하여 검색어 지우기
+        clearButton.addEventListener("click", function() {
+            searchInput.value = "";
+            updateClearButtonVisibility();
+            saveSessionQuery("");  // 검색어를 지우기 위해 빈 문자열 저장
+        });
+
+        // 검색어 입력 시 X 버튼의 가시성 업데이트
+        searchInput.addEventListener("input", function() {
+            updateClearButtonVisibility();
+        });
+
+        // 폼 제출 시 검색어를 세션 스토리지 저장
+        searchForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            saveSessionQuery(searchInput.value);
+            document.getElementById('search-form').submit();
+        });
+
+        // 세션 스토리지에 검색어를 저장
+        function saveSessionQuery(query) {
+            sessionStorage.setItem("searchQuery", query);
+        }
+
+        // 세션 스토리지에서 검색어를 가져옴
+        function getSessionSavedQuery() {
+            return sessionStorage.getItem("searchQuery");
+        }
+
+        // X 버튼의 가시성 업데이트
+        function updateClearButtonVisibility() {
+            clearButton.style.display = searchInput.value ? "block" : "none";
+        }
+    };
+
+
+
+</script>

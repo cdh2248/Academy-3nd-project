@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="ALL"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <title>MY PAGE > PARTY PEOPLE</title>
+  <meta name="Description" content="인천시 다양한 모임주제에 맞는(회식/데이트/동호회) AI추천 카테고리에 대한 나만의 초대카드를 만들어보세요."/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0.1,maximum-scale=5.0,user-scalable=yes" />
+  <link rel="stylesheet" type="text/css" href="../css/reset.css" th:href="@{/css/testyo.css}" >
+  <link rel="stylesheet" type="text/css" href="../css/reset.css" >
+  <link rel="stylesheet" type="text/css" href="../css/layout.css" >
+  <link rel="stylesheet" type="text/css" href="../css/card.css" >
+  <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3fa5806dfe291fb3622cf85fca14b017&libraries=services,clusterer,drawing"></script>
+  <script src="../js/jquery.js"></script>
+  <!--구글 차트 관련 스크립트-->
+  <script src="//kit.fontawesome.com/56b5cc4bd2.js" crossorigin="anonymous"></script><!-- 폰트어썸(아이콘 폰트) 사용 인증된 링크 -->
+  <script src="../js/jquery-ui-1.10.4.custom.min.js"></script>
+</head>
+<body>
+<div class="container invite mypage">
+  <!-- 모달 레이어 : 모임카드 미리보기 상세페이지 정보 -->
+  <div class="modal_layer_wrap">
+    <div class="layer_box"></div>
+  </div>
+  <!-- ####### 01. HEADER START ####### -->
+  <div class="header_wrap" th:insert="~{insert/header_wrap}"></div>
+  <!-- ####### 01. HEADER END ####### -->
+  <hr class="skip"/>
+  <!-- ####### 02. LNB START ######### -->
+  <div class="lnb" th:if="${client eq null}" th:insert="~{insert/lnb_wrap}"></div>
+  <div class="lnb" th:if="${client != null}" th:insert="~{insert/lnb_wrap_login}"></div>
+  <!-- ####### 02. LNB END ########## -->
+  <hr class="skip"/>
+  <!-- ####### 03. CONTENTS START ####### -->
+  <section class="contents_wrap">
+
+    <!-- #### 03-1.우측 본문 영역 시작 -->
+    <div class="left_contents">
+      <div class="left_contents_padding_left"></div>
+      <div class="left_contents_center">
+        <div class="page_title">
+          <h1><!-- ## 페이지 타이틀 ##  좌측 메뉴 .active 되어 있는 메뉴명 제이쿼리 클론하여 가져옴 --> </h1>
+          <!-- ## 페이지 네비 경로 ## -->
+          <span class="page_path"><!-- 페이지 네비게이션 제이쿼리 액티브 메뉴 복사 --></span>
+        </div>
+        <div class="page_contents">
+          내용을 입력하세요~
+
+        </div>
+      </div>
+    </div>
+    <!-- #### 03-1.우측 본문 영역 끝 -->
+  </section>
+  <!-- ####### 03. CONTENTS END ####### -->
+  <hr class="skip"/>
+  <!-- ####### 04. FOOTER START ####### -->
+
+  <div class="footer_wrap" th:insert="~{insert/footer_wrap}"></div>
+
+  <!-- ####### 04. FOOTER END ####### -->
+</div>
+</body>
+</html>

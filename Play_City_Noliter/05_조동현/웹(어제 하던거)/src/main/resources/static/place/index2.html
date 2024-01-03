@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>실시간 추천 결과</title>
+</head>
+<body>
+    <h1>실시간 추천 결과</h1>
+    <!-- 카테고리 입력과 주소 입력 칸 삭제 -->
+    <!-- <label for="category">카테고리:</label> -->
+    <!-- <input type="text" id="category" placeholder="카테고리 입력"> -->
+    <br>
+    <label for="keywords">키워드:</label>
+    <input type="text" id="keywords" placeholder="키워드 입력">
+    <br>
+    <!-- 주소 입력 칸 삭제 -->
+    <!-- <label for="address">주소:</label> -->
+    <!-- <input type="text" id="address" placeholder="주소 입력"> -->
+    <br>
+    <button id="run-button">추천 알고리즘 실행</button>
+    <div id="recommendation-results"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+<script type="module">
+    // import {dataList} from "../../../스프링부트/src/main/resources/static/js/test.js";
+
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    document.getElementById('run-button').addEventListener('click', function() {
+        sendRecommendationCriteria();
+    });
+
+    function sendRecommendationCriteria() {
+        // 카테고리와 주소 값을 가져오는 부분 삭제
+        // var category = document.getElementById('category').value;
+        var keywords = document.getElementById('keywords').value;
+        // var address = document.getElementById('address').value;
+
+        var data = {
+            // 카테고리 값을 보내지 않도록 삭제
+            // category: category,
+            keywords: keywords,
+            // address: address
+        };
+
+        socket.emit('run_recommendation', data);
+    }
+
+    socket.on('recommendation_result', function(data) {
+        var results = data.result;
+
+        var recommendationResultsDiv = document.getElementById('recommendation-results');
+        recommendationResultsDiv.innerHTML = ""; // 이전 결과 지우기
+
+        for (var i = 0; i < results.length; i++) {
+            var category = results[i][0];
+            var place = results[i][1];
+            var distances = results[i][2];
+
+            // 각 추천 결과에 대한 HTML 내용 생성
+            var recommendationHTML = "<div class='recommendation-item'>";
+            recommendationHTML += "<h3>" + category + " - " + place + "</h3>";
+            recommendationHTML += "<ul>";
+
+            for (var j = 0; j < distances.length; j++) {
+               let category = distances[j][0]; // 추가: 카테고리 정보 가져오기
+               let nearbyPlace = distances[j][1]; // 추가: 가까운 장소 이름 가져오기
+               let address = distances[j][2];
+               let distance = distances[j][3];
+               let keywords = distances[j][4].join(', ');
+
+               recommendationHTML += "<li>";
+               recommendationHTML += "추천 카테고리: " + category + "<br>"; // 추가: 추천 카테고리 표시
+               recommendationHTML += "가까운 장소: " + nearbyPlace + "<br>"; // 수정: 가까운 장소 표시
+               recommendationHTML += "주소: " + address + "<br>";
+               recommendationHTML += "거리: " + distance.toFixed(2) + " km<br>";
+               recommendationHTML += "키워드: " + keywords + "<br>";
+               recommendationHTML += "</li>";
+            }
+
+            recommendationHTML += "</ul></div>";
+            recommendationResultsDiv.innerHTML += recommendationHTML;
+
+           // dataList(category, nearbyPlace, address, distance, keywords)
+        }
+    });
+</script>
+</body>
+</html>
+
+
+
+
+
+

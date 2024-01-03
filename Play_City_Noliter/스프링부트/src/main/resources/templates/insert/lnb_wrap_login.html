@@ -1,0 +1,41 @@
+<div class="lnb_wrap">
+    <!-- #### 02-1. 좌측 고정 업종별 아이콘 메뉴 시작 -->
+    <dl class="fixed_quick_menu">
+        <!--        <dt title="Party Peaple(인천)"><i class="fa-solid fa-map-location-dot"></i>인천</dt>-->
+        <dd class="home"><a href="/"><i class="fa-solid fa-house"></i> Home</a></dd>
+        <dd class="place active"><a href="/place"><i class="fa-solid fa-map-location-dot"></i> Place</a></dd>
+        <dd class="invite"><a href="/invite"><i class="fa-solid fa-people-group"></i> Invite</a></dd>
+        <dd class="analysis"><a href="/analysis"><i class="fa-solid fa-chart-line"></i> Analysis</a></dd>
+        <dd class="myCard"><a href="/client/myCard"><i class="fa-solid fa-user-gear"></i> My-Card</a></dd>
+<!--        <dd class="place active"><a href="place"><i class="fa-solid fa-map-location-dot"></i> Place</a></dd>-->
+<!--        <dd><a href="category"><i class="fa-regular fa-compass"></i> Category</a></dd>-->
+<!--        <dd class="invite"><a href="invite"><i class="fa-solid fa-people-group"></i> Invite</a></dd>-->
+<!--        <dd class="analysis"><a href="analysis"><i class="fa-solid fa-chart-line"></i> Analysis</a></dd>-->
+    </dl>
+    <ul class="membership">
+        <li><a href="/client/logout"><i class="fa-solid fa-right-to-bracket"></i> 로그아웃</a></li>
+        <li><a href="/client/myInfo"><i class="fa-solid fa-user-plus"></i> 내 정보수정</a></li>
+    </ul>
+    <hr class="skip"/>
+    <!-- #### 02-2. 좌측 on/off 페이지 서브 메뉴 노출 시작 -->
+
+    <!-- lnb 내부 lnb-->
+    <div class="lnb" th:if="${category eq 'place'}" th:insert="~{insert/place_lnb}"></div>
+    <div class="lnb" th:if="${category eq 'invite'}" th:insert="~{insert/invite_lnb}"></div>
+    <div class="lnb" th:if="${category eq 'analysis'}" th:insert="~{insert/analysis_lnb}"></div>
+    <div class="lnb" th:if="${category eq 'myCard'}" th:insert="~{insert/myCard_lnb}"></div>
+    <!-- #### 02-2 좌측 on/off 페이지 서브 메뉴 노출 끝 -->
+</div>
+
+<script th:inline="javascript">
+    var category = [[${category}]]
+    console.log(category)
+    function activeCategory(category){
+        $('dd').removeClass('active');
+        $('dd.'+category).addClass('active')
+    }
+    activeCategory(category)
+
+
+
+</script>

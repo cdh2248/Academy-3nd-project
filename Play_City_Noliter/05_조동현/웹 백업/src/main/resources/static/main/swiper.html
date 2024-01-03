@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Swiper demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <style>
+        swiper-container { max-width: 1000px; padding:10px 0; }
+        swiper-slide { max-width: 500px;}
+        swiper-slide img { display: block; width: 100%; height: 100px}
+    </style>
+</head>
+<body>
+<swiper-container class="mySwiper"  pagination="true" pagination-clickable="true" navigation="true" space-between="10"  autoplay-delay="1000"  loop="true" autoplay-disable-on-interaction="true" effect="fade" ><!-- slide, fade, cube, coverflow, flip-->
+    <swiper-slide>
+        <img src=" https://swiperjs.com/demos/images/nature-1.jpg" />
+    </swiper-slide>
+    <swiper-slide>
+        <img src="https://swiperjs.com/demos/images/nature-2.jpg" />
+    </swiper-slide>
+    <swiper-slide>
+        <img src="https://swiperjs.com/demos/images/nature-3.jpg" />
+    </swiper-slide>
+
+</swiper-container>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-element-bundle.min.js"></script>
+
+<script>
+    const swiperEl = document.querySelector('swiper-container')
+
+    const params = {
+        injectStyles: [`
+      .swiper-pagination-bullet {
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        line-height: 20px;
+        font-size: 12px;
+        color: #000;
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .swiper-pagination-bullet-active {
+        color: #fff;
+        background: #007aff;
+      }
+      `],
+        pagination: {
+            clickable: true,
+            renderBullet: function (index, className) {
+                return '<span class="' + className + '">' + (index + 1) + "</span>";
+            },
+        },
+    }
+
+    Object.assign(swiperEl, params)
+
+    swiperEl.initialize();
+</script>
+
+</body>
+
+</html>

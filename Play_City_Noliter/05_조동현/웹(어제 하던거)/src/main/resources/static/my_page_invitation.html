@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+    <style>
+        #section-wrap {
+            position: fixed;
+            width: 1300px;
+        }
+        .sidebar-left{
+            position: relative;
+            float: left;
+            width: 150px;
+            height: 1000px;
+            background-color:rgb(238, 241, 248);
+            padding-top:20px;
+            padding-left:10px;
+            padding-right:10px;
+        }
+
+        .sidebar-left img {
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        .sidebar-left ul {
+            list-style-type: none;
+            font-size: 1.5em;
+            margin-top: 30px;
+            font-weight: bold;
+        }
+        .sidebar-left ul li{
+            font-size: 15px;
+            margin: 30px 0;
+            color: grey;
+            font-weight: bold;
+        }
+        .sidebar-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            float: right;
+            width: 250px;
+            height: 1000px;
+            background-color:rgb(238, 241, 248);
+            text-align: center;
+            letter-spacing: 5px;
+            padding-top:20px;
+            padding-left:10px;
+            padding-right:10px;
+        }
+
+        .sidebar-right img {
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        ul.navi li {
+            list-style-type: none; /*불릿 없앰*/
+            display: block; /*영역 만듦*/
+            width: 13em; /*너비*/
+            height: 3em; /*높이*/
+            float: left; /*왼쪽으로 플로팅*/
+            text-align: center; /*가운데 정렬*/
+            font-family: "Lucida Grande", sans-serif; /*글꼴*/
+            border: 1px #818181 solid; /*테두리*/
+            box-shadow: 1px 1px 1px #bbb; /*박스그림자*/
+        }
+        /* 메뉴 링크 스타일 */
+        /* ul.navi를 ul로 바꾸는 연습을 해보세요. (Ctrl+r)
+        15_rounded-navi.html => 15_rounded-navi2.html 바꾸어서 before/after
+        결과가 같다는 것을 확인하세요.
+         */
+        ul.navi li a {
+            display: block; /* 영역 만듦 */
+            padding: .8em .5em .5em .5em; /* 안여백 */
+            text-decoration: none; /* 밑줄 없앰 */
+            color: #292929; /* 글자색 */
+            text-shadow: 1px 1px 0px #cccccc; /* 텍스트 그림자 */
+        }
+        /* 메뉴 링크 위로 마우스 오버했을 때의 스타일 */
+        ul.navi li:hover{
+            background-color: #333333; /* 배경색 */
+        }
+
+        /* 메뉴 링크 위로 마우스 오버한 후 링크 스타일 */
+        ul.navi li:hover > a{
+            color:#FFF; /* 글자색 */
+            text-shadow:0px 1px 0px #fff; /* 텍스트 그림자 */
+        }
+        /*첫번째 항목의 스타일*/
+        ul.navi li:first-child {
+            border-top-left-radius: 1em; /*왼쪽 상단 코너를 부드럽게*/
+            border-bottom-left-radius: 1em; /*왼쪽 하단 코너를 부드럽게*/
+        }
+        /* 마지막 항목의 스타일*/
+        ul.navi li:last-child {
+            border-top-right-radius: 1em; /*오른쪽 상단 코너를 부드럽게*/
+            border-bottom-right-radius: 1em; /*오른쪽 하단 코너를 부드럽게*/
+        }
+        input {
+            height: 35px;
+            border-radius: 1em;
+            margin: 10px;
+            margin-left: 15px;
+        }
+        section h2 {
+            margin-left: 180px;
+        }
+        .orderlist {
+            padding: 200px;
+            text-align: center;
+            width: 795px;
+            height: 600px;
+
+        }
+        footer {
+            padding:30px;
+            margin-bottom:0;
+            text-align:center;
+        }
+        footer p{
+            text-align:left;
+            font-size:12px;
+            color:	#696969;
+            padding:5px;
+        }
+        div{
+            color: #5c636a;
+        }
+    </style>
+</head>
+<body>
+<div id="section-wrap">
+    <aisde class="sidebar-left">
+        <h1>My page</h1>
+        <ul><h5>초대장</h5>
+            <li><a href="">상세내역</a></li>
+<!--            <li></li>-->
+        </ul>
+
+        <ul><h5>내 정보관리</h5>
+<!--            <li><a href="">내위치 설정</li>-->
+            <li><a href="">회원정보 수정</a></li>
+            <li><a href="">회원탈퇴</li>
+        </ul>
+
+        <ul><h5>내 활동관리</h5>
+            <li><a href="">저장된 <br>플레이스</li>
+            <li><a href="">리뷰쓰기</a></li>
+        </ul>
+
+<!--        <ul>문의내역-->
+<!--            <li>상품Q&A</li>-->
+<!--            <li>상담문의조회</li>-->
+<!--        </ul>-->
+    </aisde>
+
+
+    <section class="order">
+        <h2>초대장 내역</h2>
+        <form>
+            <input type="search" size="50" placeholder="받은 초대장 검색해보세요!">
+        </form>
+        <ul class="navi">
+            <li id="home"><a href="#">전체</a></li>
+            <li id="html"><a href="#">1개월</a></li>
+            <li id="css"><a href="#">3개월</a></li>
+            <li id="jquery"><a href="#">6개월</a></li>
+        </ul>
+        <div class="orderlist">
+<!--            <img src="img/alert.png">-->
+<!--            <p>최근 6개월간 초대장 내역이 없습니다.</p>-->
+<!--            <img src="img/information.png">-->
+            <div class="article">
+                08.21 파티완료
+
+
+        </div>
+
+    </section>
+
+</body>
+</html>

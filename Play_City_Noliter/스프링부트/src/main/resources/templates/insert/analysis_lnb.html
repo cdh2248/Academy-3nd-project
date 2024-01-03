@@ -1,0 +1,33 @@
+<div class="lnb">
+    <!-- 02-2-1. 대시보드 집계 그래프 노출 영역 시작 -->
+    <h2> <div class="standard_cond">지역구 별,<br> 주요 지하철역의 시계열 데이터를 확인해보세요.</div></h2>
+    <!-- 02-2-1.대시보드 집계 그래프 노출 영역 끝 -->
+    <!-- 02-2-2.페이지 컨텐츠 서브 메뉴 노출 시작 -->
+    <ul class="sub_menu_list">
+<!--        <li><a href="../analysis/analysis.html" class="active"><i class="fa-solid fa-chart-column"></i> <span>시계열 분석</span></a></li>-->
+        <li class="분석"><a href="analysis" class="active"><i class="fa-solid fa-chart-column"></i> <span>시계열 분석</span></a></li>
+        <li class="부평역"><a href="bup"><i class="fa-solid fa-chart-simple"></i> <span>부평구 부평역</span></a></li>
+        <li class="시청역"><a href="in_city"><i class="fa-solid fa-chart-simple"></i> <span>남동구 인천시청역</span></a></li>
+        <li class="터미널역"><a href="in_t"><i class="fa-solid fa-chart-simple"></i> <span>남구 인천터미널역</span></a></li>
+        <li class="공원역"><a href="songdo"><i class="fa-solid fa-chart-simple"></i> <span>연수구 송도달빛축제공원역</span></a></li>
+        <li class="주안역"><a href="juan"><i class="fa-solid fa-chart-simple"></i> <span>미추홀구 주안역</span></a></li>
+        <li class="석남역"><a href="sucknam"><i class="fa-solid fa-chart-simple"></i> <span>서구 석남역</span></a></li>
+        <li class="교대역"><a href="k_in_univer"><i class="fa-solid fa-chart-simple"></i> <span>계양구 경인교대입구역</span></a></li>
+    </ul>
+</div>
+
+
+<script th:inline="javascript">
+    window.onload = function() {
+      console.log("시스템 레디")
+    };
+
+    var lnb = [[${lnbInfo}]]
+    console.log("사이드바정보["+lnb+"]")
+    function activeLnb(lnb){
+        $('.sub_menu_list li a').removeClass('active');
+        $('.sub_menu_list li.'+ lnb +' a').addClass('active')
+    }
+    activeLnb(lnb)
+
+</script>

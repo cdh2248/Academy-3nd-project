@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="ALL"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>PLACE > PARTY PEOPLE</title>
+    <meta name="Description" content="인천광역시 소재의 다양한 모임취향에 맞는(회식/데이트/동호회) AI추천 모임장소에 대한 상세정보를 제공합니다."/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0.1,maximum-scale=5.0,user-scalable=yes" />
+    <link rel="stylesheet" type="text/css" href="../css/reset.css" >
+    <link rel="stylesheet" type="text/css" href="../css/layout.css" >
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3fa5806dfe291fb3622cf85fca14b017&libraries=services,clusterer,drawing"></script>
+    <script src="../js/jquery.js"></script>
+    <!--구글 차트 관련 스크립트-->
+    <script src="//kit.fontawesome.com/56b5cc4bd2.js" crossorigin="anonymous"></script><!-- 폰트어썸(아이콘 폰트) 사용 인증된 링크 -->
+    <script src="../js/jquery-ui-1.10.4.custom.min.js"></script>
+
+
+    <!--    카카오 지도 스타일 시작 -->
+    <style>
+        .dot {overflow:hidden;float:left;width:12px;height:12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/mini_circle.png');}
+        .dotOverlay {position:relative;bottom:10px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;font-size:12px;padding:5px;background:#fff;}
+        .dotOverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
+        .number {font-weight:bold;color:#ee6152;}
+        .dotOverlay:after {content:'';position:absolute;margin-left:-6px;left:50%;bottom:-8px;width:11px;height:8px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white_small.png')}
+        .distanceInfo {position:relative;top:5px;left:5px;list-style:none;margin:0;}
+        .distanceInfo .label {display:inline-block;width:50px;}
+        .distanceInfo:after {content:none;}
+
+        .map_wrap, .map_wrap * { margin: 0; padding: 0; font-family: 'Malgun Gothic', dotum, '돋움', sans-serif; font-size: 12px; z-index: 10;}
+        .map_wrap a, .map_wrap a:hover, .map_wrap a:active { color: #000; text-decoration: none; }
+        .map_wrap { position: relative; width: 100%; height: 1000px; }
+        #menu_wrap { position: absolute; top: 0; left: 0; width: 250px; margin: 10px 0 30px 10px; padding: 5px; overflow-y: auto; background: rgba(255, 255, 255, 0.7); z-index: 10; font-size: 12px; border-radius: 10px; }
+        .bg_white { background: #fff; }
+        #menu_wrap hr { display: block; height: 1px; border: 0; border-top: 2px solid #5F5F5F; margin: 3px 0; }
+        #menu_wrap .option { text-align: center; }
+        #menu_wrap .option p { margin: 10px 0; }
+        #menu_wrap .option button { margin-left: 5px; }
+        #placesList li { list-style: none; }
+        #placesList .item { position: relative; border-bottom: 1px solid #888; overflow: hidden; cursor: pointer; min-height: 65px; }
+        #placesList .item span { display: block; margin-top: 4px; }
+        #placesList .item h5, #placesList .item .info { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+        #placesList .info .gray { color: #8a8a8a; }
+        #placesList .info .jibun { padding-left: 26px; background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat; }
+        #placesList .info .tel { color: #009900; }
+        #placesList .item .markerbg { float: left; position: absolute; width: 36px; height: 37px; margin: 10px 0 0 10px; background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat; }
+        #placesList .item .marker_1 { background-position: 0 -10px; }
+        #placesList .item .marker_2 { background-position: 0 -56px; }
+        #placesList .item .marker_3 { background-position: 0 -102px }
+        #placesList .item .marker_4 { background-position: 0 -148px; }
+        #placesList .item .marker_5 { background-position: 0 -194px; }
+        #placesList .item .marker_6 { background-position: 0 -240px; }
+        #placesList .item .marker_7 { background-position: 0 -286px; }
+        #placesList .item .marker_8 { background-position: 0 -332px; }
+        #placesList .item .marker_9 { background-position: 0 -378px; }
+        #placesList .item .marker_10 { background-position: 0 -423px; }
+        #placesList .item .marker_11 { background-position: 0 -470px; }
+        #placesList .item .marker_12 { background-position: 0 -516px; }
+        #placesList .item .marker_13 { background-position: 0 -562px; }
+        #placesList .item .marker_14 { background-position: 0 -608px; }
+        #placesList .item .marker_15 { background-position: 0 -654px; }
+        #pagination { margin: 10px auto; text-align: center; }
+        #pagination a { display: inline-block; margin-right: 10px; }
+        #pagination .on { font-weight: bold; cursor: default; color: #777; }
+    </style>
+    <!--    카카오 지도 스타일 끝-->
+</head>
+<body>
+<div class="container">
+    <!-- 장소(업체명)에 대한 상페정보 페이지 -->
+    <div class="modal_layer_wrap">
+        <div class="layer_box"></div>
+    </div>
+    <!-- ####### 01. HEADER START ####### -->
+    <div class="header_wrap" th:insert="~{insert/header_wrap}"></div>
+    <!-- ####### 01. HEADER END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 02. LNB START ######### -->
+<!--    <div class="lnb_wrap" th:insert="~{insert/lnb_wrap}"></div>-->
+    <div class="lnb" th:if="${client eq null}" th:insert="~{insert/lnb_wrap}"></div>
+    <div class="lnb" th:if="${client != null}" th:insert="~{insert/lnb_wrap_login}"></div>
+    <!-- ####### 02. LNB END ########## -->
+    <hr class="skip"/>
+    <!-- ####### 03. CONTENTS START ####### -->
+    <section class="contents_wrap">
+        <!-- ########  페이지마다의 고정 서비스 내용이(예, 지도나 모임카드 수정) 들어갑니다. ########### -->
+        <div class="left_contents">
+            <div class="map_wrap">
+                <div id="map"></div>
+            </div>
+            <script th:inline="javascript">
+                <!--  울 학원 기준으로 처음 위치 지정-->
+                var mapContainer = document.getElementById('map');
+                var mapOption = {
+                    center: new kakao.maps.LatLng(37.335887, 126.584063),
+                    level: 10
+                };
+
+                // 지도 생성
+                var map = new kakao.maps.Map(mapContainer, mapOption);
+                //   실시간 교통량 표시
+                // map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
+                // 추천카드 세트별 선 색깔
+                var colors  = ['#ff0000', '#ff8c00', '#008000', '#0000ff', '#4b0082', '#8b00ff'];
+
+                var rmaps = /*[[${searchResult}]]*/ []; // 추천 카드 세트 리스트를 받고 (근데 마커가 거꾸로 찍혀서 뒤집을거라 rmaps라고 미리 함(여기를 maps로 하면 기존코드 변수명들을 다 바꿔야해서 걍 여기를 rmasp로 함))
+                console.log(rmaps);
+
+                var maps = [];
+
+                for(var i = 0; i < rmaps.length; i++){
+                    maps.push(rmaps[i].slice().reverse()); // 원본 배열 복사 후 역순으로 뒤집은 배열 생성
+                }
+                console.log(maps);
+
+
+                for(var a = 0; a < maps.length; a++){
+
+                    var df = maps[a]; // 각 세트별 좌표를 df로
+                    console.log(df);
+
+                    // 좌표와 다른 정보들을 받아옴
+                    positions = [];
+                    for (var i = 0; i < df.length; i++) {
+                        var row = df[i];
+                        positions.push({
+                            id: row.id,
+                            category: row.category,
+                            title: row.title,
+                            latlng: new kakao.maps.LatLng(row.latitude, row.longitude),
+
+                        });
+                    }
+                    console.log(positions);
+
+                    // 마커 이미지
+                    var imageSrc = "images/marker_spot(" + a + ").png";
+                    // var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+                    // var imageSize = new kakao.maps.Size(24, 35);  // 원래 마커 사이즈
+                    var imageSize = new kakao.maps.Size(30, 48);  // 마커 사이즈 가로, 세로 값 수정하면서 크기 변경하면 됨
+                    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+                    //
+                    // var markers = [] // 클러스터러에 마커 리스트로 넘겨주기 위해서
+
+                    // 마커찍는 for문
+                    for (var i = 0; i < positions.length; i++) {
+                        var marker = new kakao.maps.Marker({
+                            map: map,   // 클러스터러 쓸때는 여기서 맵 지정해서 마커 찍으면 안됌
+                            id: positions[i].id,
+                            position: positions[i].latlng,
+                            title: positions[i].title,
+                            category: positions[i].category,
+                            image: markerImage,
+                        });
+
+                        // 마우스 올릴때 나오는 정보 추가
+                        var info = '<h3>' + positions[i].title + '</h3>' + '<p>' + positions[i].category + '</p>';
+                        // var info = '<h3>' + positions[i].title + '</h3>' + '<p>' + positions[i].opend + '</p>' + '<p>' + positions[i].closed + '</p>';
+                        var infowindow = new kakao.maps.InfoWindow({
+                            content: info
+                        });
+
+                        kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
+                        kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
+                        kakao.maps.event.addListener(marker, 'click', makeClickListener(positions[i].index));
+                    }
+
+                    // 선을 그리기 위한 좌표 배열이 필요
+                    var clickPosition = []
+                    for (var i = 0; i < df.length; i++){
+                        clickPosition.push(new kakao.maps.LatLng(df[i].latitude, df[i].longitude))
+                    }
+
+                    var color = colors[a]; // 선에 넣을 색 선택
+                    var polyline = new kakao.maps.Polyline({
+                        // map: map, // 이거 대신에 아래 polyline.setMap(map);로 맵에 선을 그림
+                        path: clickPosition, // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+                        strokeWeight: 3, // 선의 두께입니다
+                        strokeColor: color, // 선의 색깔입니다 '#db4040'
+                        strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+                        strokeStyle: 'solid' // 선의 스타일입니다
+                    });
+                    polyline.setMap(map);
+
+                    // 아래 코드는 마커에 거리랑 빨간 점 찍는 코드
+                    // ver2는 마커별로 사이사이 거리가 찍히고, ver1은 마지막에 총 거리만 찍힘
+                    // ver2 displayCircleDot에 clickPosition을 리스트로 주는 경우(테스트중)
+                    for(var i = 0; i < clickPosition.length-1; i++){ // 마지막 마커는 거리를 잴 다음 마커가 없으므로 lenght-1
+
+                        // dline은 실제 그어지는 선이 아니라 거리 계산을 위한 매개변수용 선
+                        var dline = new kakao.maps.Polyline({
+                            // map: map, // 선을 표시할 지도입니다
+                            path: [clickPosition[i], clickPosition[i+1]], // 선을 구성하는 좌표 배열입니다
+                            strokeWeight: 3, // 선의 두께입니다
+                            strokeColor: '#db4040', // 선의 색깔입니다
+                            strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+                            strokeStyle: 'solid' // 선의 스타일입니다
+                        });
+
+                        // dline.getLength()는 dline의 path에 있는 좌표 리스트의 모든 좌표간 거리를 더하는 함수
+                        var distance = Math.round(dline.getLength());
+                        console.log(distance);
+                        displayCircleDot(clickPosition[i], distance); // 거리, 점 찍기
+
+                    }
+
+
+                    // ver1 displayCircleDot에 clickPosition을 하나만 주는 경우 (이건 마지막에 총거리만 찍힘)
+                    // for (var i = 0; i < clickPosition.length; i++){
+                    //     var distance = Math.round(polyline.getLength());
+                    //     displayCircleDot(clickPosition[i], distance);
+                    // }
+                    //
+                }
+
+                // 마우스 올리면 정보 나오는 함수
+                function makeOverListener(map, marker, infowindow) {
+                    return function () {
+                        infowindow.open(map, marker);
+                    };
+                }
+
+                // 마우스 내리면 info안나오는 함수
+                function makeOutListener(infowindow) {
+                    return function () {
+                        infowindow.close();
+                    };
+                }
+
+                // 클릭하면 상세페이지로 넘어가는 함수 (아직 미완)
+                function makeClickListener(index) {
+                    return function () {
+                        window.location.href = "festival/" + index;
+                    };
+                }
+                //
+                // // ver1
+                // function displayCircleDot(position, distance) {
+                //
+                //     // 클릭 지점을 표시할 빨간 동그라미 커스텀오버레이를 생성합니다
+                //     var circleOverlay = new kakao.maps.CustomOverlay({
+                //         content: '<span class="dot"></span>',
+                //         position: position,
+                //         zIndex: 1
+                //     });
+                //
+                //     // 지도에 표시합니다
+                //     circleOverlay.setMap(map);
+                //
+                //     if (distance > 0) {
+                //         // 클릭한 지점까지의 그려진 선의 총 거리를 표시할 커스텀 오버레이를 생성합니다
+                //         var distanceOverlay = new kakao.maps.CustomOverlay({
+                //             content: '<div class="dotOverlay">총거리 <span class="number">' + distance + '</span>m</div>',
+                //             position: position,
+                //             yAnchor: 1,
+                //             zIndex: 2
+                //         });
+                //
+                //         // 지도에 표시합니다
+                //         distanceOverlay.setMap(map);
+                //     }
+                //
+                //     // 배열에 추가합니다
+                //     // dots.push({circle:circleOverlay, distance: distanceOverlay});
+                // }
+
+
+
+
+                // 이건 점이랑 거리 찍는 함수(api 그대로 쓴거임)
+                function displayCircleDot(position, distance) {
+
+                    // 클릭 지점을 표시할 빨간 동그라미 커스텀오버레이를 생성합니다
+                    // for(var i = 0; i<position.length;i++){
+                    var circleOverlay = new kakao.maps.CustomOverlay({
+                        content: '<span class="dot"></span>',
+                        position: position,
+                        zIndex: 1
+                    });
+                    circleOverlay.setMap(map);
+
+                    if (distance > 0) {
+                        // 클릭한 지점까지의 그려진 선의 총 거리를 표시할 커스텀 오버레이를 생성합니다
+                        var distanceOverlay = new kakao.maps.CustomOverlay({
+                            content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
+                            position: position,
+                            yAnchor: 1,
+                            zIndex: 2
+                        });
+
+                        // 지도에 표시합니다
+                        distanceOverlay.setMap(map);
+
+                    }
+
+
+                }
+
+                // 이건 거리를 도보/자전거 시간으로 변환해서 찍어주는 함수인데 아직 안씀!
+                function getTimeHTML(distance) {
+
+                    // 도보의 시속은 평균 4km/h 이고 도보의 분속은 67m/min입니다
+                    var walkkTime = distance / 67 | 0;
+                    var walkHour = '', walkMin = '';
+
+                    // 계산한 도보 시간이 60분 보다 크면 시간으로 표시합니다
+                    if (walkkTime > 60) {
+                        walkHour = '<span class="number">' + Math.floor(walkkTime / 60) + '</span>시간 '
+                    }
+                    walkMin = '<span class="number">' + walkkTime % 60 + '</span>분'
+
+                    // 자전거의 평균 시속은 16km/h 이고 이것을 기준으로 자전거의 분속은 267m/min입니다
+                    var bycicleTime = distance / 227 | 0;
+                    var bycicleHour = '', bycicleMin = '';
+
+                    // 계산한 자전거 시간이 60분 보다 크면 시간으로 표출합니다
+                    if (bycicleTime > 60) {
+                        bycicleHour = '<span class="number">' + Math.floor(bycicleTime / 60) + '</span>시간 '
+                    }
+                    bycicleMin = '<span class="number">' + bycicleTime % 60 + '</span>분'
+
+                    // 거리와 도보 시간, 자전거 시간을 가지고 HTML Content를 만들어 리턴합니다
+                    var content = '<ul class="dotOverlay distanceInfo">';
+                    content += '    <li>';
+                    content += '        <span class="label">총거리</span><span class="number">' + distance + '</span>m';
+                    content += '    </li>';
+                    content += '    <li>';
+                    content += '        <span class="label">도보</span>' + walkHour + walkMin;
+                    content += '    </li>';
+                    content += '    <li>';
+                    content += '        <span class="label">자전거</span>' + bycicleHour + bycicleMin;
+                    content += '    </li>';
+                    content += '</ul>'
+
+                    return content;
+                }
+            </script>
+
+        </div>
+        <!-- #### 03-1.우측 본문 영역 시작 -->
+        <div class="right_contents area">
+            <div class="page_title">
+                <h1 th:text="${searchText}">돈비어<!-- ## 페이지 타이틀 ##  좌측 메뉴 .active 되어 있는 메뉴명 제이쿼리 클론하여 가져옴 --> </h1>
+                <!-- ## 페이지 네비 경로 ## -->
+                <span class="page_path"><!-- 페이지 네비게이션 제이쿼리 액티브 메뉴 복사 --></span>
+            </div>
+<!--            <div class="paging">-->
+<!--                <a href="#" class="btn_first"></a>-->
+<!--                <a href="#" class="btn_prev"></a>-->
+<!--                <a href="#" class="active">1</a>-->
+<!--                <a href="#">2</a>-->
+<!--                <a href="#">3</a>-->
+<!--                <a href="#">4</a>-->
+<!--                <a href="#">5</a>-->
+<!--                <a href="#" class="btn_next"></a>-->
+<!--                <a href="#" class="btn_last"></a>-->
+<!--            </div>-->
+            <form>
+                <div class="card_list_wrap">
+                    <!-- 추천(조합) 모임카드 #.01 시작 -->
+                    <dl class="ai_card" th:each="search, iterStat :${searchResult}">
+                        <dt class="header">
+                            <h2 class="subject_keyword">
+                                <span class="area">
+<!--<<<<<<< Updated upstream-->
+<!--                                    th:color="${colors[iterStat.count]}-->
+<!--                                    <b class="depth_1" th:text="${iterStat.count}">1</b>-->
+<!--                                    <b class="depth_2" th:text="${search[0].address.substring(search[0].address.indexOf(' ') + 1, search[0].address.indexOf(' ', search[0].address.indexOf(' ') + 1))}">중구</b></span>-->
+<!--=======-->
+<!--                                    <b class="depth_1" th:text="${iterStat.count}" th:color="${colors[(iterStat.count)-1]}">1</b>-->
+
+<!--                                    컨트롤러에서 colors리스트 받은걸 iterStat.count 순으로 (근데 iterStat.count는 1부터라서 -1 함)  -->
+                                    <b class="depth_1" th:text="${iterStat.count}" th:style="'color: ' + ${colors[iterStat.count - 1]}">1</b>
+                                    <b class="depth_2" th:text="${search[0].address.substring(search[0].address.indexOf(' ') + 1, search[0].address.indexOf(' ', search[0].address.indexOf(' ') + 1))}">중구</b></span>
+<!--&gt;>>>>>> Stashed changes-->
+                                </span>
+                                <!--                                    <b class="depth_2"-->
+<!--                                       th:text="${search[0].address.substring-->
+<!--                                       (search[0].address.indexOf(' ')+1,-->
+<!--                                       search[0].address.indexOf(search[0].address.indexOf(' ')+1,' '))}">중구</b></span>-->
+                                <strong th:text="|${search[0].category}/${search[0].smallCategory}/${search[0].title}|">데이트/동인천/차이나타운/동인천/차이나타운</strong>
+                            </h2>
+                            <p class="keyword_recommand"><!-- 연관 키워드 3개 -->
+                                <span th:each="splited:${search}" style="display: inline">
+                                <a onclick="sendKeyword(this)" th:text="${splited.keyword.substring(0,splited.keyword.indexOf('/'))}" class="pointer">고기맛집</a>
+                                <a onclick="sendKeyword(this)"
+                                   th:text="${splited.keyword.substring(splited.keyword.indexOf(',') + 1,
+                                    splited.keyword.indexOf('/',splited.keyword.indexOf('/')+1))}" class="pointer">중구</a>
+                                </span>
+                            </p>
+                            <!-- post 보내는곳 -->
+
+                        </dt>
+                        <dd class="body">
+                            <!-- 대안 장소 선택_01: 업체 리스트 -->
+                            <div class="card_list" th:each="place :${search}">
+                                <ul class="summary_card">
+                                    <li class="subject">
+<!--                                        <b><span class="matching_keyword" th:text="${split_search.title}">돈비어</span>천가</b>-->
+                                        <b><span th:text="${place.title}">돈비어천가</span></b>
+                                        <span class="category"><b class="depth_1" th:text="${place.category}">음식</b><b class="depth_2" th:text="${place.smallCategory}">한식</b></span>
+                                    </li>
+                                    <li class="thumb"><img src="http://post.phinf.naver.net/MjAxOTExMjdfMjU1/MDAxNTc0ODU4NzA3NDE4.cjVEQJahI7WG4lpINfdBrR7bkSPwCfFUIv_2leVYckkg.NBlTAwviZVXDJ_IPraQF0HC_l2jrnUV01rd3Bwkgydwg.JPEG/IanVqhid6dpa7OUrwfq7lLuE4OJE.jpg" th:src="${place.imageAdd1}" alt="돈비어천가"></li>
+                                    <li class="btn_wrap">
+                                        <button>상세정보</button>
+                                        <button>지도보기</button>
+                                    </li>
+                                    <li class="addr" th:text="${place.address}">인천 중구 개항로 63-2</li>
+                                    <li class="work_time" th:text="${place.runTimeInfo}">10:00~22:00브레이크타임없음<span>(쉬는날 : 연중무휴)</span></li>
+                                    <li class="parking" th:text="${place.parkingInfo}">주차시설 : 있음,유료</li>
+                                    <li class="tel" th:text="${place.tel}">032-930-1234</li>
+                                </ul>
+                            </div>
+                            <!-- 대안 장소 선택_02: 업체 리스트 -->
+
+                            <!-- 대안 장소 선택_03: 업체 리스트 -->
+                        </dd>
+                        <dd class="footer">
+                            <button class="basic"><i class="fa-solid fa-location-dot"></i> 추천장소 지도보기</button>
+                            <button class="confirm"  ><i class="fa-solid fa-pen-to-square"></i> 모임카드 만들기</button>
+                        </dd>
+                    </dl>
+                    <!-- 추천(조합) 모임카드 #.01 끝 -->
+
+                </div>
+            </form>
+            <form id="hashTagForm" action="/place" method="post">
+                <input type="hidden" id="hashTag" name="hashTag">
+            </form>
+
+            <script th:inline="javascript">
+                <!-- 스프링으로 보내기 -->
+                function sendKeyword(element) {
+                    var textValue = element.innerText;
+                    console.log(textValue);
+
+                    document.getElementById('hashTag').value = element.innerText;
+                    document.getElementById('hashTagForm').submit();
+                }
+            </script>
+        </div>
+        <!-- #### 03-1.우측 본문 영역 끝 -->
+    </section>
+    <!-- ####### 03. CONTENTS END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 04. FOOTER START ####### -->
+    <div class="footer_wrap" th:insert="~{insert/footer_wrap}">
+    <!-- ####### 04. FOOTER END ####### -->
+</div>
+</body>
+</html>

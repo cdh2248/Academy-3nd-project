@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="ALL"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>ANALYSIS > PARTY PEOPLE</title>
+    <meta name="Description" content="인천시 다양한 모임주제에 맞는(회식/데이트/동호회) AI추천 카테고리에 대한 나만의 초대카드를 만들어보세요."/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0.1,maximum-scale=5.0,user-scalable=yes" />
+    <link rel="stylesheet" type="text/css" href="../css/reset.css" th:href="@{/css/testyo.css}" >
+    <link rel="stylesheet" type="text/css" href="../css/reset.css" >
+    <link rel="stylesheet" type="text/css" href="../css/layout.css" >
+    <link rel="stylesheet" type="text/css" href="../css/card.css" >
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3fa5806dfe291fb3622cf85fca14b017&libraries=services,clusterer,drawing"></script>
+    <script src="../js/jquery.js"></script>
+    <!--구글 차트 관련 스크립트-->
+    <script src="//kit.fontawesome.com/56b5cc4bd2.js" crossorigin="anonymous"></script><!-- 폰트어썸(아이콘 폰트) 사용 인증된 링크 -->
+    <script src="../js/jquery-ui-1.10.4.custom.min.js"></script>
+</head>
+<body>
+<div class="container invite analisys">
+    <!-- 모달 레이어 : 모임카드 미리보기 상세페이지 정보 -->
+    <div class="modal_layer_wrap detail">
+        <div class="layer_bg"></div>
+        <div class="layer_box">
+            <a href="#" class="close_layer"><i class="fa-solid fa-xmark"></i></a>
+            <!--            <div class="layer_contents" th:insert="~{place_info}"></div>-->
+        </div>
+    </div>
+    <!-- ####### 01. HEADER START ####### -->
+    <div class="header_wrap" th:insert="~{insert/header_wrap}"></div>
+    <!-- ####### 01. HEADER END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 02. LNB START ######### -->
+    <div class="lnb" th:if="${client eq null}" th:insert="~{insert/lnb_wrap}"></div>
+    <div class="lnb" th:if="${client != null}" th:insert="~{insert/lnb_wrap_login}"></div>
+    <!-- ####### 02. LNB END ########## -->
+    <hr class="skip"/>
+    <!-- ####### 03. CONTENTS START ####### -->
+    <section class="contents_wrap">
+
+        <!-- ########  페이지마다의 고정 서비스 내용이(예, 지도나 모임카드 수정) 들어갑니다. ########### -->
+        <div class="left_contents">
+            <!-- ########  페이지마다의 고정 서비스 내용이(예, 지도나 모임카드 수정) 들어갑니다. ########### -->
+            <div class="left_contents">
+                <div id="map"></div>
+                <script th:inline="javascript">
+                    /* 지도 관련 스크립트*/
+
+                    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                        mapOption = {
+                            /* 전국 지도*/
+                            // center: new kakao.maps.LatLng(36.01683146793617, 129.42603381793853), // 지도의 중심좌표
+                            // level: 13 // 지도의 확대 레벨
+
+                            /* 인천으로만 타겟을 줄인 지도*/
+                            center: new kakao.maps.LatLng(37.4896712, 126.722668), // 지도의 중심좌표
+                            level: 4 // 지도의 확대 레벨
+                        };
+                    // 지도를 생성합니다
+                    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+                    // var imageSrc = "http://t1.daumcdn.net/localimg/localimages/07/2018/pc/img/marker_spot.png";
+                    var imageSrc = "images/marker_spot(0).png";
+                    var imageSize = new kakao.maps.Size(24, 35);
+                    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+                    var latlng = new kakao.maps.LatLng(37.4895467, 126.723336);
+
+                    var marker = new kakao.maps.Marker({
+                        map: map,   // 클러스터러 쓸때는 여기서 맵 지정해서 마커 찍으면 안됌
+                        position: latlng,
+                        title: '부평역',
+                        image: markerImage // 마커 이미지
+                    });
+                    var center = map.getCenter();
+
+                    // 조금만 오른쪽으로 이동시킬 거리 (단위: 미터)
+                    var offsetX = 10; // 예시로 1000미터 이동
+
+                    // 새로운 중심 좌표 계산
+                    var newCenter = new kakao.maps.LatLng(center.getLat(), center.getLng() + (offsetX / 1000)); // 경도에 offset을 더해 새로운 경도 계산
+
+                    map.setCenter(newCenter);
+
+                </script>
+
+            </div>
+        </div>
+        <!-- #### 03-1.우측 본문 영역 시작 -->
+        <div class="right_contents area">
+            <div class="page_title">
+                <h1>Analysis<!-- ## 페이지 타이틀 ##  좌측 메뉴 .active 되어 있는 메뉴명 제이쿼리 클론하여 가져옴 --> </h1>
+                <!-- ## 페이지 네비 경로 ## -->
+                <span class="page_path"><!-- 페이지 네비게이션 제이쿼리 액티브 메뉴 복사 --></span>
+            </div>
+            <div class="card_list_wrap">
+                <!-- 데이터 시각화 분석 #.01 시작 -->
+
+<!--                <dl class="ai_card">-->
+<!--                    <dt class="header">-->
+<!--                        <h2>인천 지하철 시계열 분석</h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                            인천 광역시 부평구를 대표하는 부평역 하차 유동인구 기준, 유동인구 혼잡도를 시계열 예측 분석-->
+<!--                        </p>-->
+<!--                    </dt>-->
+<!--                    <dd class="content_data">-->
+<!--                        &lt;!&ndash;                        데이터 시각화 그래프 그려주세요.(이미지든 Chart JS든 )&ndash;&gt;-->
+<!--                        <table border="1">-->
+<!--                            &lt;!&ndash;                          <caption>인천교통공사에서 운영 중인 인천지하철 1호선, 2호선, 7호선(인천구간+부천구간)의 2022년 7월 1일부터 2023년 6월 30일까지 역별 일별 이용이원 현황자료입니다. (호선, 통행일자, 역명, 구분, 이용인원)</caption>&ndash;&gt;-->
+<!--                            <tbody>-->
+<!--                            <tr>-->
+<!--                                <th>파일데이터명</th>-->
+<!--                                <td>인천교통공사_역별일별 이용인원현황_20230630</td>-->
+
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>분류체계</th>-->
+<!--                                <td>교통및물류 - 철도</td>-->
+<!--                                <th>제공기관</th>-->
+<!--                                <td>-->
+<!--                                    <a href="/tcs/dss/selectDataSetList.do?dType=&amp;keyword=&amp;org=인천교통공사&amp;orgFilter=인천교통공사&amp;orgFullName=인천교통공사&amp;conditionType=search">-->
+<!--                                        인천교통공사-->
+<!--                                    </a>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>관리부서명</th>-->
+<!--                                <td>스마트정보팀</td>-->
+<!--                                <th>관리부서 전화번호</th>-->
+<!--                                <td><strong><span id="telNo1">032-451-2123</span></strong><script>-->
+<!--                                    var telNo = "0324512123";-->
+
+<!--                                    if (telNo !== null && telNo !== "null" && telNo !== "nullnullnull") {-->
+<!--                                        $("#telNo1").text(telNo.replace(/(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/,"$1-$2-$3"));-->
+<!--                                    }-->
+<!--                                </script></td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>보유근거</th>-->
+<!--                                <td></td>-->
+<!--                                <th>수집방법</th>-->
+<!--                                <td></td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>업데이트 주기</th>-->
+<!--                                <td>연간</td>-->
+<!--                                <th>차기 등록 예정일</th>-->
+<!--                                <td>2024-08-15</td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>매체유형</th>-->
+<!--                                <td>텍스트</td>-->
+<!--                                <th>전체 행</th>-->
+<!--                                <td>49640</td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>확장자</th>-->
+<!--                                <td>CSV</td>-->
+<!--                                <th>키워드</th>-->
+<!--                                <td>수송통계,수송인원,시간대별</td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+
+
+<!--                                <th>-->
+<!--                                    >-->
+<!--                                    <small>* 주기성 데이터 포함</small>-->
+<!--                                </th>-->
+<!--                                <td></td>-->
+
+
+
+
+
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>등록일</th>-->
+<!--                                <td>2023-07-17</td>-->
+<!--                                <th>수정일</th>-->
+<!--                                <td>2023-07-17</td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>데이터 한계</th>-->
+<!--                                <td></td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>제공형태</th>-->
+<!--                                <td>공공데이터포털에서 다운로드(원문파일등록)</td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>설명</th>-->
+<!--                                <td>인천교통공사에서 운영 중인 인천지하철 1호선, 2호선, 7호선(인천구간+부천구간)의 2022년 7월 1일부터 2023년 6월 30일까지 역별 일별 이용이원 현황자료입니다. (호선, 통행일자, 역명, 구분, 이용인원)</td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>기타 유의사항</th>-->
+<!--                                <td></td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>비용부과유무</th>-->
+<!--                                <td>무료</td>-->
+<!--                                <th>비용부과기준 및 단위</th>-->
+<!--                                <td>건 </td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>이용허락범위</th>-->
+<!--                                <td>-->
+<!--                                    <div class="img-copyright">-->
+<!--                                        <a href="/ugs/selectPortalPolicyView.do" target="_blank" title="새 창으로 공공데이터포털 정책 열기">-->
+<!--                                            이용허락범위 제한 없음-->
+<!--                                        </a>-->
+<!--                                    </div>-->
+
+
+
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            </tbody>-->
+
+<!--                        </table>-->
+<!--                        ​-->
+<!--                    </dd>-->
+<!--                </dl>-->
+
+<!--                <dl class="ai_card">-->
+<!--                    <dt class="header">-->
+<!--                        <h2>인천 지하철 시계열 분석</h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                            인천 광역시 지하철역 하차 유동인구 기준, 유동인구 혼잡도를 시계열 예측 분석-->
+<!--                        </p>-->
+<!--                    </dt>-->
+<!--                    <dd class="content_data">-->
+<!--                        &lt;!&ndash;                        데이터 시각화 그래프 그려주세요.(이미지든 Chart JS든 )&ndash;&gt;-->
+<!--                        <h2>1. 예측모델: Neuralprophet</h2>-->
+<!--                        <p>-->
+<!--                            작년 7월부터-->
+<!--                            올해 6월까지 인천 각 구의 인구이동이 활발한 임의역을 정해  하차인원을  일별로 기록한 데이터프레임에서 랜덤하게 10%의 행을 선택해 샘플링하여 일부 데이터를 추출하여-->
+<!--                            검증용데이터프레임으로 만들고 원본 데이터프레임에서 제거해 원본데이터를 학습데이터로 만들었습니다.-->
+<!--                            <br>-->
+<!--                        </p>-->
+
+<!--                        <h2><br> 2. 데이터 수집 및 전처리</h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                            인천 지하철 하차 인원과 관련된 데이터를 수집합니다. 이 데이터에는 하차역, 날짜 정보가 포함됩니다.-->
+<!--                            데이터를 정리하고 필요한 형식으로 전처리합니다. 예를 들어, 날짜와 시간 정보를 처리하고, 역의 위치 정보를 확보합니다.-->
+<!--                            <br>-->
+<!--                            <img src="../images/img_anal/데이터처리/데이터전처리.JPG">-->
+<!--                            <img src="../images/img_anal/데이터처리/데이터전처리2.JPG">-->
+<!--                            <br>-->
+<!--                        </p>-->
+<!--                        <h2><br>3. 딥러닝 모델 구성</h2>-->
+<!--                        <p>딥러닝 모델을 구성합니다. 이 모델은 인천 지하철 하차 인원과 관련된 데이터를 입력으로 받아 혼잡도를 예측하는 작업을 수행합니다.-->
+<!--                            모델은 일반적으로 입력 레이어, 여러 은닉 레이어, 그리고 출력 레이어로 구성됩니다. 데이터에 따라 모델의 아키텍처가 다를 수 있습니다.-->
+<!--                            <br><img src="../images/img_anal/데이터처리/딥러닝.JPG"><br></p>-->
+<!--                        <br>-->
+<!--                        <h2>4. 학습 데이터 준비</h2>-->
+<!--                        원본 데이터를 학습과 검증 데이터로 나눕니다. 일반적으로 학습 데이터는 모델을 학습하는 데 사용되고, 검증 데이터는 모델의 성능을 평가하는 데 사용됩니다.-->
+<!--                        여기서 원본 데이터프레임에서 일부 행을 랜덤하게 선택하여 검증용 데이터프레임을 만듭니다. 이 데이터프레임은 모델을 평가하는 데 사용될 것입니다.-->
+<!--                        <br><img src="../images/img_anal/데이터처리/4번.JPG"><br>-->
+
+<!--                        <h2><br>5. 모델 학습</h2>-->
+<!--                        선택한 딥러닝 모델을 학습 데이터를 사용하여 학습시킵니다. 모델은 입력 데이터와 실제 혼잡도 값 간의 관계를 학습하게 됩니다.<br>-->
+<!--                        <img src="../images/img_anal/데이터처리/피팅.JPG">-->
+
+<!--                        <h2><br>6. 모델 평가<br></h2>-->
+<!--                        검증용 데이터프레임을 사용하여 모델을 평가합니다. 모델이 예측한 혼잡도와 실제 혼잡도를 비교하여 모델의 성능을 평가합니다.-->
+<!--                        평가 지표로는 평균 제곱 오차(Mean Squared Error, MSE)나 평균 절대 오차(Mean Absolute Error, MAE) 등을 사용할 수 있습니다.-->
+<!--                        <img src="../images/img_anal/데이터처리/오차.JPG"><br>-->
+
+<!--                        <h2><br>7. 혼잡도 예측<br></h2>-->
+<!--                        모델이 학습되고 검증되면, 이제 예측할 준비가 됩니다. 모델을 사용하여 각 인천의 구에서 특정역들의 하차인원을 예측할 수 있습니다.-->
+<!--                        이 설명을 통해, 데이터 수집부터 딥러닝 모델 학습, 평가, 예측까지의 과정을 조리 있게 이해할 수 있을 것입니다. 또한, 데이터를 샘플링하여 검증용 데이터프레임을 만들고,-->
+<!--                        원본 데이터에서 해당 행을 제거하여 학습 데이터를 생성하는 부분도 설명하였습니다.</dd>-->
+<!--                </dl>-->
+                <dl class="ai_card">
+                    <dt class="header">
+                        <h2> 부평구 부평역 시계열 분석</h2>
+                        <p><!-- 연관 키워드 10개 -->
+                            인천 광역시 부평구를 대표하는 부평역 하차 유동인구 기준, 유동인구 혼잡도를 시계열 예측 분석
+                        </p>
+                    </dt>
+                    <dd class="content_data">
+                        <!--                        데이터 시각화 그래프 그려주세요.(이미지든 Chart JS든 )-->
+                        <h2>1. 예측 모델 검증</h2>
+                        <p>
+                            <img src="../images/img_anal/부평역/예측모델.JPG" alt="부평역 시계열 예측모델">
+                        </p>
+
+                        <h2></h2>
+                        <p><!-- 연관 키워드 10개 -->
+                        </p>
+
+                        <h2>2. 트렌드 분석</h2>
+                        <p>
+                            <img src="../images/img_anal/부평역/트렌드.JPG" alt="주기성 차트">
+                        </p>
+
+                        <h2>3. 실제 데이터와 예측데이터의 오차</h2>
+                        <h3><br>평균 제곱 오차: 205344.48
+                            평균 절대 오차: 282.93</h3>
+                        <br>
+                        <h2>4. 미래 예측</h2>
+                        <p>
+                            학습 데이터 이후의 30일 간의 하차인원 예측 그래프
+                            <img src="../images/img_anal/부평역/부평미래예측.JPG" alt="주기성 차트">
+                        </p>
+                        ​
+                    </dd>
+                </dl>
+                <!-- 데이터 시각화 분석 #.01 끝 -->
+
+                <!-- 데이터 시각화 분석 #.02 시작 -->
+<!--                <dl class="ai_card">-->
+<!--                    <dt class="header">-->
+<!--                        <h2> 남동구 인천시청역 시계열 분석</h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                            &lt;!&ndash;                            인천 광역시 부평구를 대표하는 부평역 하차 유동인구 기준, 유동인구 혼잡도를 시계열 예측 분석&ndash;&gt;-->
+<!--                        </p>-->
+<!--                    </dt>-->
+<!--                    <dd class="content_data">-->
+<!--                        &lt;!&ndash;                        데이터 시각화 그래프 그려주세요.(이미지든 Chart JS든 )&ndash;&gt;-->
+<!--                        <h2>1. 예측 모델</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/남동구/예측모델.JPG" alt="인천시청역 시계열 예측모델">-->
+<!--                        </p>-->
+
+<!--                        <h2></h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                        </p>-->
+
+<!--                        <h2>2. 트렌드 분석</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/남동구/주기성차트.JPG" alt="주기성차트">-->
+<!--                        </p>-->
+
+<!--                        <h2>실제 데이터와 예측데이터의 오차</h2>-->
+<!--                        <p><br>평균 제곱 오차: 937490.77-->
+<!--                            평균 절대 오차: 558.09-->
+<!--                            ​</p>-->
+<!--                    </dd>-->
+<!--                </dl>-->
+
+<!--                <dl class="ai_card">-->
+<!--                    <dt class="header">-->
+<!--                        <h2> 남구 인천터미널역 시계열 분석</h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                            &lt;!&ndash;                            인천 광역시 부평구를 대표하는 부평역 하차 유동인구 기준, 유동인구 혼잡도를 시계열 예측 분석&ndash;&gt;-->
+<!--                        </p>-->
+<!--                    </dt>-->
+<!--                    <dd class="content_data">-->
+<!--                        &lt;!&ndash;                        데이터 시각화 그래프 그려주세요.(이미지든 Chart JS든 )&ndash;&gt;-->
+<!--                        <h2>1. 예측 모델</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/남구/예측모델.JPG" alt="인천터미널역 시계열 예측모델">-->
+<!--                        </p>-->
+
+<!--                        <h2></h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                        </p>-->
+
+<!--                        <h2>2. 트렌드 분석</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/남구/트렌드.JPG" alt="주기성 차트">-->
+<!--                        </p>-->
+
+<!--                        <h2>실제 데이터와 예측데이터의 오차</h2>-->
+<!--                        <p><br>평균 제곱 오차: 781933.44-->
+<!--                            평균 절대 오차: 614.10</p>-->
+<!--                    </dd>-->
+<!--                </dl>-->
+
+<!--                <dl class="ai_card">-->
+<!--                    <dt class="header">-->
+<!--                        <h2> 연수구 송도달빛축제공원역 시계열 분석</h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                            &lt;!&ndash;                            인천 광역시 부평구를 대표하는 부평역 하차 유동인구 기준, 유동인구 혼잡도를 시계열 예측 분석&ndash;&gt;-->
+<!--                        </p>-->
+<!--                    </dt>-->
+<!--                    <dd class="content_data">-->
+<!--                        &lt;!&ndash;                        데이터 시각화 그래프 그려주세요.(이미지든 Chart JS든 )&ndash;&gt;-->
+<!--                        <h2>1. 예측 모델</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/송도/예측모델.JPG" alt="송도달빛축제공원역 시계열 예측모델">-->
+<!--                        </p>-->
+
+<!--                        <h2></h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                        </p>-->
+
+<!--                        <h2>2. 트렌드 분석</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/송도/트렌드.JPG" alt="주기성 차트">-->
+<!--                        </p>-->
+
+<!--                        <h2>실제 데이터와 예측데이터의 오차</h2>-->
+<!--                        <p><br>평균 제곱 오차: 3829639.89-->
+<!--                            평균 절대 오차: 818.27</p>-->
+<!--                    </dd>-->
+<!--                </dl>-->
+
+<!--                <dl class="ai_card">-->
+<!--                    <dt class="header">-->
+<!--                        <h2> 미추홀구 주안역 시계열 분석</h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                            &lt;!&ndash;                            인천 광역시 부평구를 대표하는 부평역 하차 유동인구 기준, 유동인구 혼잡도를 시계열 예측 분석&ndash;&gt;-->
+<!--                        </p>-->
+<!--                    </dt>-->
+<!--                    <dd class="content_data">-->
+<!--                        &lt;!&ndash;                        데이터 시각화 그래프 그려주세요.(이미지든 Chart JS든 )&ndash;&gt;-->
+<!--                        <h2>1. 예측 모델</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/주안역/예측모델.JPG" alt="주안역 시계열 예측모델">-->
+<!--                        </p>-->
+
+<!--                        <h2></h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                        </p>-->
+
+<!--                        <h2>2. 트렌드 분석</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/주안역/트렌드.JPG" alt="주기성 차트">-->
+<!--                        </p>-->
+
+<!--                        <h2>실제 데이터와 예측데이터의 오차</h2>-->
+<!--                        <p><br>평균 제곱 오차: 781933.44-->
+<!--                            평균 절대 오차: 614.10</p>-->
+<!--                    </dd>-->
+<!--                </dl>-->
+
+<!--                <dl class="ai_card">-->
+<!--                    <dt class="header">-->
+<!--                        <h2> 서구 석남역 시계열 분석</h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                            &lt;!&ndash;                            인천 광역시 부평구를 대표하는 부평역 하차 유동인구 기준, 유동인구 혼잡도를 시계열 예측 분석&ndash;&gt;-->
+<!--                        </p>-->
+<!--                    </dt>-->
+<!--                    <dd class="content_data">-->
+<!--                        &lt;!&ndash;                        데이터 시각화 그래프 그려주세요.(이미지든 Chart JS든 )&ndash;&gt;-->
+<!--                        <h2>1. 예측 모델</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/서구/예측.JPG" alt="석남역 시계열 예측모델">-->
+<!--                        </p>-->
+
+<!--                        <h2></h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                        </p>-->
+
+<!--                        <h2>2. 트렌드 분석</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/서구/트렌드.JPG" alt="주기성 차트">-->
+<!--                        </p>-->
+
+<!--                        <h2>실제 데이터와 예측데이터의 오차</h2>-->
+<!--                        <p><br>평균 제곱 오차: 741096.64-->
+<!--                            평균 절대 오차: 522.07</p>-->
+<!--                    </dd>-->
+<!--                </dl>-->
+
+<!--                <dl class="ai_card">-->
+<!--                    <dt class="header">-->
+<!--                        <h2> 계양구 경인교대입구역 시계열 분석</h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                            &lt;!&ndash;                            인천 광역시 부평구를 대표하는 부평역 하차 유동인구 기준, 유동인구 혼잡도를 시계열 예측 분석&ndash;&gt;-->
+<!--                        </p>-->
+<!--                    </dt>-->
+<!--                    <dd class="content_data">-->
+<!--                        &lt;!&ndash;                        데이터 시각화 그래프 그려주세요.(이미지든 Chart JS든 )&ndash;&gt;-->
+<!--                        <h2>1. 예측 모델</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/계양구/예측모델.JPG" alt="경인교대입구역 시계열 예측모델">-->
+<!--                        </p>-->
+
+<!--                        <h2></h2>-->
+<!--                        <p>&lt;!&ndash; 연관 키워드 10개 &ndash;&gt;-->
+<!--                        </p>-->
+
+<!--                        <h2>2. 트렌드 분석</h2>-->
+<!--                        <p>-->
+<!--                            <img src="../images/img_anal/계양구/트렌드.JPG" alt="주기성 차트">-->
+<!--                        </p>-->
+
+<!--                        <h2>3. 실제 데이터와 예측데이터의 오차</h2>-->
+<!--                        <p><br>평균 제곱 오차: 237321.30-->
+<!--                            평균 절대 오차: 296.81</p>-->
+<!--                    </dd>-->
+<!--                </dl>-->
+                <!-- 데이터 시각화 분석 #.02 끝 -->
+            </div>
+        </div>
+        <!-- #### 03-1.우측 본문 영역 끝 -->
+    </section>
+    <!-- ####### 03. CONTENTS END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 04. FOOTER START ####### -->
+    <div class="footer_wrap" th:insert="~{insert/footer_wrap}">
+        <!-- ####### 04. FOOTER END ####### -->
+    </div>
+</body>
+</html>

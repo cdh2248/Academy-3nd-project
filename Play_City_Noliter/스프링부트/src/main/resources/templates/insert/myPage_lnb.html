@@ -1,0 +1,22 @@
+<div class="lnb">
+    <!-- 02-2-1. 대시보드 집계 그래프 노출 영역 시작 -->
+    <h2>
+        <div class="standard_cond">
+            <!--    //로그인 전에 옆의 멘트 나오게 처리해주세요. //      회원가입을 하시면,<br>다양한 혜택이 쏟아집니다.-->
+            <span th:if="${client eq null}"><b>회원가입</b>을 하시면, <br> 다양한 혜택이 쏟아집니다.</span>
+            <span th:if="${client != null}"><b th:text="${client.clientId}">tester</b>님,<br> 좋은하루 되세요.</span>
+        </div>
+    </h2>
+    <!-- 02-2-1.대시보드 집계 그래프 노출 영역 끝 -->
+    <!-- 02-2-2.페이지 컨텐츠 서브 메뉴 노출 시작 -->
+    <ul class="sub_menu_list">
+        <li th:if="${client eq null}"><a href="/client/login"><i class="fa-solid fa-right-to-bracket"></i> <span>로그인</span> </a></li>
+        <li th:if="${client eq null}"><a href="/client/join"><i class="fa-solid fa-user-plus"></i> <span>회원가입</span></a></li>
+        <li th:if="${client eq null}"><a href="/client/findId"><i class="fa-solid fa-key"></i> <span>아이디 찾기</span></a></li>
+        <li th:if="${client eq null}"><a href="/client/findPw"><i class="fa-solid fa-key"></i> <span>비밀번호 찾기</span></a></li>
+        <li th:if="${client != null}"><a href="/client/myInfo" class="active"><i class="fa-solid fa-user-pen"></i> <span>회원 정보수정</span> </a></li>
+        <li th:if="${client != null}"><a href="#"><i class="fa-regular fa-envelope"></i> <span>나의 모임카드</span></a></li>
+        <li th:if="${client != null}"><a href="/client/logout"><i class="fa-solid fa-right-from-bracket"></i> <span>로그아웃</span></a></li>
+        <li th:if="${client != null}"><a href="/client/quit"><i class="fa-solid fa-square-xmark"></i> <span>회원탈퇴</span></a></li>
+    </ul>
+</div>

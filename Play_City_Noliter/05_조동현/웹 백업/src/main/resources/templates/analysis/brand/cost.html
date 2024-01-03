@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="ALL"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>브랜드별 프랜차이즈 가맹현황</title>
+    <meta name="Description" content="브랜드별 외식 프랜차이즈 통계에 대한 다양한 정보를 제공합니다."/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0.1,maximum-scale=5.0,user-scalable=yes" />
+    <link rel="stylesheet" type="text/css" href="css/reset.css" >
+    <link rel="stylesheet" type="text/css" href="css/layout.css" >
+    <link rel="stylesheet" type="text/css" href="css/jquery.stickytable.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <script src="/js/jquery.js"></script>
+    <script src="//code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="/js/jquery-ui.js"></script><!--layout 리사이즈-->
+    <script src="//cdn.jsdelivr.net/npm/chart.js"></script> <!-- js chart 설치 -->
+    <script src="/js/jquery.stickytable.js"></script><!-- 고정 테이블 -->
+    <script src="//kit.fontawesome.com/56b5cc4bd2.js" crossorigin="anonymous"></script><!-- 폰트어썸(아이콘 폰트) 사용 인증된 링크 -->
+    <!--    <script src="js/jquery-ui-1.10.4.custom.min.js"></script>-->
+
+
+</head>
+<body class="brand">
+<div class="container">
+    <!-- ####### 01. HEADER START ####### -->
+    <div class="header_wrap" th:insert="~{header.html}"></div>
+    <!-- ####### 01. HEADER END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 02. LNB START ######### -->
+    <div class="lnb_wrap">
+        <!-- #### 02-1. 좌측 고정 업종별 아이콘 메뉴 시작 -->
+        <dl class="fixed_quick_menu" th:insert="~{fixed_lnb.html}"></dl>
+        <hr class="skip"/>
+        <!-- #### 02-2. 좌측 on/off 페이지 서브 메뉴 노출 시작 -->
+        <div class="lnb" th:insert="~{brand_lnb.html}">
+            <div class="btn_lnb_open"><a href="#" class="fa fa-chevron-left"></a></div>
+            <!-- 02-2-2.페이지 컨텐츠 서브 메뉴 노출 끝 -->
+        </div>
+        <!-- #### 02-2 좌측 on/off 페이지 서브 메뉴 노출 끝 -->
+    </div>
+    <!-- ####### 02. LNB END ########## -->
+    <hr class="skip"/>
+    <!-- ####### 03. CONTENTS START ####### -->
+    <section class="contents_wrap">
+        <!-- #### 03-1.우측 본문 영역 시작 -->
+        <div class="right_contents">
+            <!-- ######## 각 페이지에 해당 하는 내용 HTML을 넣어주세요.########### -->
+            <script>
+                $(function(){
+                    // 업종별 대메뉴 활성화(class="active") 메뉴버튼 처리
+                    $("nav ul li:nth-child(2) a").addClass("active");
+                    // 사용자가 선택한 메뉴 활성화(class="active")에 따른 페이지 메뉴명 제이쿼리 변경 처리
+                    $(".sub_menu_list li a.active").clone().appendTo(".right_contents h1");
+                    // $(".right_contents h1 span").appendTo("분석");
+                    // 페이지 네비게이션 경로 처리
+                    $("nav ul li a.active").clone().appendTo(".page_path");
+                    $(".sub_menu_list li a.active span").clone().appendTo(".page_path");
+                });
+            </script>
+            <!-- ## 페이지 타이틀 ## -->
+            <h1><!-- 좌측 메뉴 .active 되어 있는 메뉴명 제이쿼리 클론하여 가져옴 --> </h1>
+            <!-- ## 페이지 네비 경로 ## -->
+            <span class="page_path"><!-- 페이지 네비게이션 제이쿼리 액티브 메뉴 복사 --></span>
+            <div class="graph_wrap">
+                <div class="brand_pie_chart2">
+                    <div class="title">
+
+                        <h2>창업 초기 비용</h2>
+                        <span>출처 : 공정거래위원회</span>
+                    </div>
+
+
+                    <div class="phppot-container">
+                        <canvas id="mychart"></canvas>
+                    </div>
+
+
+                    <script th:inline="javascript">
+
+                        var findAll = [[${findAll}]];
+                        console.log(findAll)
+
+                        var ctx = document.getElementById("mychart").getContext('2d');
+                        var myChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: findAll.map(cost => cost.brandName),
+
+
+                                datasets: [{
+                                    label: '가맹사업자가맹금액',
+                                    backgroundColor: 'rgba(255, 61, 61, 0.8)',
+                                    data:  findAll.map(cost => cost.memberAmount),
+                                }, {
+                                    label: '가맹사업자교육금액',
+                                    backgroundColor: "rgba(61, 255, 200, 0.8)",
+                                    data: findAll.map(cost => cost.trainingAmount),
+                                }, {
+                                    label: '인테리어금액',
+                                    backgroundColor: "rgba(255, 165, 61, 0.8)",
+                                    data: findAll.map(cost => cost.interiorAmount),
+                                },{
+                                        label: '총합계금액',
+                                        backgroundColor: "rgba(250, 125, 61, 0.8)",
+                                        data: // findAll.map(cost => cost.guaranteedAmount),
+                                            findAll.map(cost => cost.interiorAmount + cost.trainingAmount + cost.memberAmount),
+                                }
+                                ],
+                            },
+                            options: {
+                                tooltips: {
+                                    displayColors: true,
+                                    callbacks: {
+                                        mode: 'x',
+                                    },
+                                },
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                    },
+                                    y: {
+                                        stacked: true
+                                    }
+                                },
+                                responsive: true
+                            }
+                        });
+                    </script>
+
+
+                </div>
+            </div>
+            <!-- 테이블 데이터 영역 끝 -->
+            <!-- ######## 각 페이지에 해당 하는 내용 HTML을 넣어주세요.########### -->
+        </div>
+        <!-- #### 03-1.우측 본문 영역 끝 -->
+    </section>
+    <!-- ####### 03. CONTENTS END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 04. FOOTER START ####### -->
+    <div class="footer_wrap" th:insert="~{footer.html}"></div>
+    <!-- ####### 04. FOOTER END ####### -->
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js"></script>
+</body>
+</html>

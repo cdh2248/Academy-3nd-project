@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=e1e551e15865fab2a76df10ea5a01b79&libraries=clusterer"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link th:href="@{/css/template.css}" rel="stylesheet">
+  <script th:src="@{/js/chart.js}"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+  <title>카카오맵 검색 기능 추가</title>
+  <style>
+    .map_wrap, .map_wrap * { margin: 0; padding: 0; font-family: 'Malgun Gothic', dotum, '돋움', sans-serif; font-size: 12px; z-index: 10;}
+    .map_wrap a, .map_wrap a:hover, .map_wrap a:active { color: #000; text-decoration: none; }
+    .map_wrap { position: relative; width: 100%; height: 1000px; }
+    #menu_wrap { position: absolute; top: 0; left: 0; width: 250px; margin: 10px 0 30px 10px; padding: 5px; overflow-y: auto; background: rgba(255, 255, 255, 0.7); z-index: 10; font-size: 12px; border-radius: 10px; }
+    .bg_white { background: #fff; }
+    #menu_wrap hr { display: block; height: 1px; border: 0; border-top: 2px solid #5F5F5F; margin: 3px 0; }
+    #menu_wrap .option { text-align: center; }
+    #menu_wrap .option p { margin: 10px 0; }
+    #menu_wrap .option button { margin-left: 5px; }
+    #placesList li { list-style: none; }
+    #placesList .item { position: relative; border-bottom: 1px solid #888; overflow: hidden; cursor: pointer; min-height: 65px; }
+    #placesList .item span { display: block; margin-top: 4px; }
+    #placesList .item h5, #placesList .item .info { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+    #placesList .info .gray { color: #8a8a8a; }
+    #placesList .info .jibun { padding-left: 26px; background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat; }
+    #placesList .info .tel { color: #009900; }
+    #placesList .item .markerbg { float: left; position: absolute; width: 36px; height: 37px; margin: 10px 0 0 10px; background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat; }
+    #placesList .item .marker_1 { background-position: 0 -10px; }
+    #placesList .item .marker_2 { background-position: 0 -56px; }
+    #placesList .item .marker_3 { background-position: 0 -102px }
+    #placesList .item .marker_4 { background-position: 0 -148px; }
+    #placesList .item .marker_5 { background-position: 0 -194px; }
+    #placesList .item .marker_6 { background-position: 0 -240px; }
+    #placesList .item .marker_7 { background-position: 0 -286px; }
+    #placesList .item .marker_8 { background-position: 0 -332px; }
+    #placesList .item .marker_9 { background-position: 0 -378px; }
+    #placesList .item .marker_10 { background-position: 0 -423px; }
+    #placesList .item .marker_11 { background-position: 0 -470px; }
+    #placesList .item .marker_12 { background-position: 0 -516px; }
+    #placesList .item .marker_13 { background-position: 0 -562px; }
+    #placesList .item .marker_14 { background-position: 0 -608px; }
+    #placesList .item .marker_15 { background-position: 0 -654px; }
+    #pagination { margin: 10px auto; text-align: center; }
+    #pagination a { display: inline-block; margin-right: 10px; }
+    #pagination .on { font-weight: bold; cursor: default; color: #777; }
+  </style>
+</head>
+<body>
+
+
+<div class="map_wrap">
+  <div id="map" style="width: 100%; height: 100%; position: relative; overflow: hidden;"></div>
+
+  <div id="menu_wrap" class="bg_white">
+    <div class="option">
+      <div>
+        <form id="myForm" action="/festivalsAll" th:action="@{/festivalsAll}" method="post">
+          전체축제 검색 : <input type="text" value="" name="keyword" size="15">
+          <button type="submit">검색하기</button>
+        </form>
+      </div>
+    </div>
+    <div class="option">
+      <div>
+        <form id="myForm2" action="/festivalsIll" th:action="@{/festivalsIll}" method="post">
+          예정축제 검색 : <input type="text" value="" name="keyword" size="15">
+          <button type="submit">검색하기</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script th:inline="javascript">
+<!--  울 학원 기준으로 처음 위치 지정-->
+  var mapContainer = document.getElementById('map');
+  var mapOption = {
+    center: new kakao.maps.LatLng(37.335887, 126.584063),
+    level: 10
+  };
+
+ ;
+
+  // 지도 생성
+  var map = new kakao.maps.Map(mapContainer, mapOption);
+//   실시간 교통량 표시
+map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
+
+var df = /*[[${map}]]*/ []; // 타임리프 데이터를 자바스크립트로 가져옴
+
+  // 좌표와 다른 정보들을 받아옴
+  positions = [];
+  for (var i = 0; i < df.length; i++) {
+    var row = df[i];
+    positions.push({
+      id: row.id,
+      category: row.category,
+      title: row.title,
+      latlng: new kakao.maps.LatLng(row.latitude, row.longitude),
+
+    });
+  }
+
+  // 마커 이미지
+  var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+  var imageSize = new kakao.maps.Size(24, 35);
+  var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+  //
+  var markers = [] // 클러스터러에 마커 리스트로 넘겨주기 위해서
+  for (var i = 0; i < positions.length; i++) {
+    var marker = new kakao.maps.Marker({
+      // map: map,   // 클러스터러 쓸때는 여기서 맵 지정해서 마커 찍으면 안됌
+      id: positions[i].id,
+      position: positions[i].latlng,
+      title: positions[i].title,
+      category: positions[i].category,
+    });
+    markers.push(marker);
+
+    // 클러스터를 만들어줌
+    var clusterer = new kakao.maps.MarkerClusterer({
+      map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+      // markers: markers,  // 클러스터에 마커 넘겨주는 방법1: 근데 이건 로딩이 ㅈㄴ 느림
+      averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+      minLevel: 1 // 클러스터 할 최소 지도 레벨
+    })
+
+    // 마우스 올릴때 나오는 정보 추가
+    var info = '<h3>' + positions[i].title + '</h3>' + '<p>' + positions[i].category + '</p>';
+    // var info = '<h3>' + positions[i].title + '</h3>' + '<p>' + positions[i].opend + '</p>' + '<p>' + positions[i].closed + '</p>';
+    var infowindow = new kakao.maps.InfoWindow({
+      content: info
+    });
+
+    kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
+    kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
+    kakao.maps.event.addListener(marker, 'click', makeClickListener(positions[i].index));
+  }
+
+  clusterer.addMarkers(markers); // 클러스터에 마커 넘겨주는 방법2: 이건 방법1보다 로딩 개빠름
+
+// ----------------------------------------------------------------------   여긴 선연결하고 거리 쟤는 코드
+// 마커들 간의 거리를 계산하여 선으로 연결하고 거리 정보를 표시하는 함수
+function calculateAndDisplayDistances() {
+  var markerList = clusterer.getMarkers(); // 클러스터 내부의 마커들을 가져옴
+
+  for (var i = 0; i < markerList.length - 1; i++) {
+    for (var j = i + 1; j < markerList.length; j++) {
+      var distance = markerList[i].getPosition().distanceTo(markerList[j].getPosition());
+      var path = [markerList[i].getPosition(), markerList[j].getPosition()];
+
+      var polyline = new kakao.maps.Polyline({
+        path: path,
+        strokeWeight: 3,
+        strokeColor: '#db4040',
+        strokeOpacity: 1,
+        strokeStyle: 'solid'
+      });
+      polyline.setMap(map);
+
+      var content = getTimeHTML(distance);
+      showDistance(content, markerList[j].getPosition());
+    }
+  }
+
+  // 이건 클러스터까지는 되는 코드
+  // gpt는 여기서 for문 해서 markerList로 한번 더 감싸줌
+  // for (var i = 0; i < 4 - 1; i++) {
+  //   var distance = markers[i].getPosition().distanceTo(markers[i + 1].getPosition());
+  //   var path = [markers[i].getPosition(), markers[i + 1].getPosition()];
+  //
+  //   var polyline = new kakao.maps.Polyline({
+  //     path: path,
+  //     strokeWeight: 3,
+  //     strokeColor: '#db4040',
+  //     strokeOpacity: 1,
+  //     strokeStyle: 'solid'
+  //   });
+  //   polyline.setMap(map);
+  //
+  //   var content = getTimeHTML(distance);
+  //   showDistance(content, markers[i + 1].getPosition());
+  // }
+}
+
+// 거리정보를 지도에 표시하는 함수
+function showDistance(content, position) {
+  if (distanceOverlay) { // 커스텀오버레이가 생성된 상태이면
+
+    // 커스텀 오버레이의 위치와 표시할 내용을 설정합니다
+    distanceOverlay.setPosition(position);
+    distanceOverlay.setContent(content);
+
+  } else { // 커스텀 오버레이가 생성되지 않은 상태이면
+
+    // 커스텀 오버레이를 생성하고 지도에 표시합니다
+    distanceOverlay = new kakao.maps.CustomOverlay({
+      map: map, // 커스텀오버레이를 표시할 지도입니다
+      content: content,  // 커스텀오버레이에 표시할 내용입니다
+      position: position, // 커스텀오버레이를 표시할 위치입니다.
+      xAnchor: 0,
+      yAnchor: 0,
+      zIndex: 3
+    });
+  }
+}
+
+// 클릭 이벤트가 발생할 때 호출하여 거리 계산 및 표시 함수 호출
+calculateAndDisplayDistances();
+// ----------------------------------------------------------------------
+
+// 마우스 올리면 info나오는 함수
+  function makeOverListener(map, marker, infowindow) {
+    return function () {
+      infowindow.open(map, marker);
+    };
+  }
+
+// 마우스 내리면 info안나오는 함수
+  function makeOutListener(infowindow) {
+    return function () {
+      infowindow.close();
+    };
+  }
+
+  // 클릭하면 상세페이지로 넘어가는 함수 (아직 미완)
+  function makeClickListener(index) {
+    return function () {
+      window.location.href = "festival/" + index;
+    };
+  }
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+</body>
+</html>
+

@@ -1,0 +1,26 @@
+<div class="header_wrap">
+        <header>
+            <h1 class="logo"><a href="/">Party People</a></h1>
+        </header>
+
+        <form th:action="place" method="post">
+            <div class="page_search">
+                <input type="text" name="searchForm" placeholder="[인천] 장소, 상호명 검색" autofocus><!--
+                 --><input type="submit" value="" class="fa fa-search">
+<!--                </form>-->
+            </div>
+            <dl class="search_keword"> <!-- 최다 빈도수 키워드 10개만 나오게 해주세요 -->
+                <dt><a href="#" onclick="">카테고리</a></dt>
+                <dd><a href="#">관광</a></dd>
+                <dd><a href="#">전시</a></dd>
+                <dd><a href="#">자연</a></dd>
+                <dd><a href="#">레저</a></dd>
+                <dd><a href="#">쇼핑</a></dd>
+                <dd><a href="#">음식</a></dd>
+                <dd><a href="#">숙박</a></dd>
+<!--                <dd><a href="#">월미도바이킹</a></dd>-->
+<!--                <dd><a href="#">점심메뉴</a></dd>-->
+<!--                <dd><a href="#">8000원</a></dd>-->
+            </dl>
+        </form>
+    </div>

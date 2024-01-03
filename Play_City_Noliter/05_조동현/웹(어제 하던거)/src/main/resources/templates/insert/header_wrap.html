@@ -1,0 +1,44 @@
+<div class="header_wrap">
+        <header>
+            <h1 class="logo"><a href="/">Party People</a></h1>
+        </header>
+
+        <form th:action="place" method="post">
+            <div class="page_search">
+                <input type="text" name="searchForm" placeholder="[인천] 장소, 상호명 검색" autofocus><!--
+                 --><input type="submit" value="" class="fa fa-search">
+<!--                </form>-->
+            </div>
+            <dl class="search_keword"> <!-- 최다 빈도수 키워드 10개만 나오게 해주세요 -->
+                <dt><a href="#">카테고리</a></dt>
+                <dd><a href="#" onclick="sendCategory('관광')"><span>관광</span></a></dd>
+                <dd><a href="#" onclick="sendCategory('전시')"><span>전시</span></a></dd>
+                <dd><a href="#" onclick="sendCategory('자연')"><span>자연</span></a></dd><br>
+                <dd><a href="#" onclick="sendCategory('레저')"><span>레저</span></a></dd>
+                <dd><a href="#" onclick="sendCategory('쇼핑')"><span>쇼핑</span></a></dd>
+                <dd><a href="#" onclick="sendCategory('음식')"><span>음식</span></a></dd>
+                <dd><a href="#" onclick="sendCategory('숙박')"><span>숙박</span></a></dd>
+<!--                <dd><a href="#">월미도바이킹</a></dd>-->
+<!--                <dd><a href="#">점심메뉴</a></dd>-->
+<!--                <dd><a href="#">8000원</a></dd>-->
+            </dl>
+        </form>
+    </div>
+
+<!-- post 보내는곳 -->
+<form id="categoryForm" action="/place" method="post">
+    <input type="hidden" id="categorySubject" name="categorySubject">
+</form>
+
+
+
+<script th:inline="javascript">
+    <!-- 스프링으로 보내기 -->
+    function sendCategory(category) {
+
+        document.getElementById('categorySubject').value = category;
+        document.getElementById('categoryForm').submit();
+        console.log('삼성물산11층돌파기원')
+    }
+
+</script>

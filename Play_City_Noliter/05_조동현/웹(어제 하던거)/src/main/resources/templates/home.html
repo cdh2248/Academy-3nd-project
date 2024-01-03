@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+    section {
+        margin: 0 auto;
+        float: none;
+        width: 1200px;
+        padding: 5px;
+    }
+
+    section article {
+        float: left;
+        width: 800px;
+        height: 250px;
+        margin: 5px;
+        padding: 10px;
+        border: 1px solid #ccc;
+    }
+    section article h1 {
+        margin: 10px;
+        margin-left: 30px;
+    }
+    section article h3 {
+        margin: 10px;
+        margin-left: 70px;
+    }
+    section article h5 {
+        margin: 5px;
+        margin-left: 320px;
+    }
+    section article img {
+        float: left;
+        width: 230px;
+        height: 230px;
+        margin: 1px;
+        padding: 1px;
+    }
+</style>
+<body>
+<div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+        <h2>홈 화면</h2>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" type="button"
+                    th:onclick="|location.href='@{/client/join}'|">
+                회원 가입
+            </button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-dark btn-lg"
+                    onclick="location.href='items.html'"
+                    th:onclick="|location.href='@{/login}'|" type="button">
+                로그인
+            </button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-dark btn-lg"
+                    onclick="location.href='items.html'"
+                    th:onclick="|location.href='@{/map}'|" type="button">
+                지도
+            </button>
+        </div>
+    </div>
+    <hr class="my-4">
+    <section>
+    <div class="row">
+        <div class="col">
+
+            <form role="search" th:action="searchPlace" method="post">
+                <input placeholder="검색해보자" aria-label="Search" id="searchForm" name="searchForm">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+    <article th:each="result, iterStat : ${searchResult}">
+        <!--        <article th:each="cafe : ${cafes}" th:href="@{All_list/{cafeName}(cafeName=${cafe.cafeName})}">-->
+        <img th:src="${result.imageAdd1}">
+        <h1 th:text="|장소 이름 : ${iterStat.count}. ${result.title}|">리뷰 제목</h1>
+        <h3 th:text="|장소 카테고리: ${result.category}|">주소: 인천 부평구 부평대로38번길 28</h3>
+        <h3 th:text="|장소 주소: ${result.address}|">주소: 인천 부평구 부평대로38번길 28</h3>
+
+    </article>
+    </section>
+</div> <!-- /container -->
+</body>
+</html>

@@ -1,0 +1,14 @@
+노션 링크
+https://www.notion.so/invite/a3d437b40243a419987d877299a29bc0db7eef68
+
+공유 스프레드 시트
+https://docs.google.com/spreadsheets/d/1m288mT_EZsgmhrjylEeyZBzloilixOTjJUHhdufz-cM/edit?usp=sharing
+
+
+공유 폴더
+https://drive.google.com/drive/folders/15Mbwxsy9n_9Xh3xWnmcKfKhnCnoGFFIM?usp=sharing
+
+공유 DB IP
+ip : 192.168.30.240
+id:party
+password:

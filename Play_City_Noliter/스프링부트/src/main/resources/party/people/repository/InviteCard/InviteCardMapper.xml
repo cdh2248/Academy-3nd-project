@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="party.people.repository.InviteCard.InviteCardMapper">
+
+
+    <!-- 회원 가입 -->
+    <insert id="saveCard" useGeneratedKeys="true" keyProperty="sequenceId">
+        <selectKey keyProperty="sequenceId" resultType="java.lang.Long" order="BEFORE">
+            SELECT INVITE_CARD_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO INVITE_CARD (SEQUENCEID, CLIENT_ID, PLACE_ID1, PLACE_ID2, PLACE_ID3,  TITLE    ,TARGET_DATE ,TARGET_TIME,    MEETING_CONTENT,  MEETING_PARTICIPANTS,  CARD_SKIN)
+        VALUES (#{sequenceId}, #{clientId}, #{placeId1},#{placeId2}, #{placeId3}, #{title},
+        #{targetDate}, #{targetTime}, #{meetingContent},
+        #{meetingParticipants}, #{cardSkin}
+        )
+    </insert>
+
+    <!-- 아이디로 전체 불러오기 -->
+    <select id="loadById" resultType="inviteCard">
+        select *
+        from invite_card
+        where client_id = #{clientId}
+    </select>
+
+    <!-- 아이디로 페이징 불러오기 -->
+    <select id="loadByIdPaging" resultType="inviteCard">
+        <![CDATA[
+        select *
+        from
+        (select ROWNUM RN, SEQUENCEID, CLIENT_ID, PLACE_ID1, PLACE_ID2, PLACE_ID3, TITLE,
+             TARGET_DATE, TARGET_TIME, MEETING_CONTENT, MEETING_PARTICIPANTS, CARD_SKIN
+        from
+        (select * from invite_card where client_id = #{clientId} order by sequenceid desc)
+        where rownum between 1 and #{page.pageNum} * #{page.amount})
+        where RN > (#{page.pageNum}-1) * #{page.amount}
+        ]]>
+    </select>
+
+
+
+</mapper>

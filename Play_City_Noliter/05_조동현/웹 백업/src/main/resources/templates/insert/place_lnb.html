@@ -1,0 +1,49 @@
+<div class="lnb">
+    <!-- 02-2-1. 대시보드 집계 그래프 노출 영역 시작 -->
+    <h2> <div class="standard_cond">Ai추천 모임장소를 확인하신 후, <br>나만의 초대장를 만들어보세요.</div></h2>
+    <!-- 02-2-1.대시보드 집계 그래프 노출 영역 끝 -->
+    <!-- 02-2-2.페이지 컨텐츠 서브 메뉴 노출 시작 -->
+    <ul class="sub_menu_list area">
+        <li><a href="#" onclick="sendAddress('null')" class="null active"><i class="fa-solid fa-map-location-dot"></i> <span>전체</span><b class="num"></b></a></li>
+        <li><a href="#" onclick="sendAddress('연수구')" class="연수구"><i class="fa-solid fa-location-dot"></i> <span>연수구</span><b class="num"></b></a></li>
+        <li><a href="#" onclick="sendAddress('남동구')" class="남동구"><i class="fa-solid fa-map-pin"></i> <span>남동구</span><b class="num"></b></a></li>
+        <li><a href="#" onclick="sendAddress('부평구')" class="부평구"><i class="fa-solid fa-location-arrow"></i> <span>부평구</span><b class="num"></b></a></li>
+        <li><a href="#" onclick="sendAddress('계양구')" class="계양구"><i class="fa-regular fa-compass"></i> <span>계양구</span><b class="num"></b></a></li>
+        <li><a href="#" onclick="sendAddress('서구')" class="서구"><i class="fa-solid fa-location-crosshairs"></i> <span>서구</span><b class="num"></b></a></li>
+        <li><a href="#" onclick="sendAddress('동구')" class="동구"><i class="fa-solid fa-map-location-dot"></i> <span>동구</span><b class="num"></b></a></li>
+        <li><a href="#" onclick="sendAddress('중구')" class="중구"><i class="fa-solid fa-bookmark"></i> <span>중구</span><b class="num"></b></a></li>
+        <li><a href="#" onclick="sendAddress('미추홀구')" class="미추홀구"><i class="fa-solid fa-route"></i> <span>미추홀구</span><b class="num"></b></a></li>
+        <li><a href="#" onclick="sendAddress('강화군')" class="강화군"><i class="fa-solid fa-circle-info"></i> <span>강화군</span><b class="num"></b></a></li>
+        <li><a href="#" onclick="sendAddress('옹진군')" class="옹진군"><i class="fa-solid fa-tags"></i> <span>옹진군</span><b class="num"></b></a></li>
+    </ul>
+</div>
+
+<!-- post 보내는곳 -->
+<form id="addressForm" action="/place" method="post">
+    <input type="hidden" id="address" name="address">
+</form>
+
+
+
+<script th:inline="javascript">
+    <!-- 스프링으로 보내기 -->
+    function sendAddress(address) {
+        function saveSessionQuery(query) {
+            sessionStorage.setItem("searchQuery", query);
+        }
+        saveSessionQuery("");
+
+        document.getElementById('address').value = address;
+        document.getElementById('addressForm').submit();
+        console.log('야호1')
+    }
+
+    var address = [[${address}]]
+    console.log("지역정보["+address+"]")
+    function activeAddressLnb(address){
+        $('.sub_menu_list li a').removeClass('active');
+        $('.sub_menu_list li a.'+address).addClass('active')
+    }
+    activeAddressLnb(address)
+
+</script>

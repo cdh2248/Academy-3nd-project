@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="ALL"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>PARTY PEOPLE</title>
+    <meta name="Description" content="AI추천 인천 명소에 대한 나만의 초대카드를 만들어보세요."/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0.1,maximum-scale=5.0,user-scalable=yes" />
+    <link rel="stylesheet" type="text/css" href="../css/reset.css" >
+    <link rel="stylesheet" type="text/css" href="../css/layout.css" >
+    <link rel="stylesheet" type="text/css" href="../css/card.css" >
+    <link rel="stylesheet" type="text/css" href="../css/main.css" >
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3fa5806dfe291fb3622cf85fca14b017&libraries=services,clusterer,drawing"></script>
+    <script src="../js/jquery.js"></script>
+    <!--구글 차트 관련 스크립트-->
+    <script src="//kit.fontawesome.com/56b5cc4bd2.js" crossorigin="anonymous"></script><!-- 폰트어썸(아이콘 폰트) 사용 인증된 링크 -->
+    <script src="../js/jquery-ui-1.10.4.custom.min.js"></script>
+</head>
+<body>
+<div class="container main">
+    <!-- 모달 레이어 : 모임카드 미리보기 상세페이지 정보 -->
+    <div class="modal_layer_wrap detail">
+        <div class="layer_bg"></div>
+        <div class="layer_box">
+            <a href="#" class="close_layer"><i class="fa-solid fa-xmark"></i></a>
+            <div class="layer_contents" th:insert="~{place_info}"></div>
+        </div>
+    </div>
+    <!-- ####### 01. HEADER START ####### -->
+    <div class="header_wrap">
+        <header>
+            <h1 class="logo"><a href="/">Party People</a></h1>
+        </header>
+    </div>
+    <!-- ####### 01. HEADER END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 02. LNB START ######### -->
+    <div class="lnb_wrap">
+        <!-- #### 02-1. 좌측 고정 업종별 아이콘 메뉴 시작 -->
+        <dl class="fixed_quick_menu">
+            <dt title="Party Peaple(인천)"> 인천시</dt>
+            <dd class="active"><a href="/"><i class="fa-solid fa-house"></i> Home</a></dd>
+            <dd><a href="place"><i class="fa-solid fa-map-location-dot"></i> Place</a></dd>
+            <dd><a href="invite"><i class="fa-solid fa-people-group"></i> Invite</a></dd>
+            <dd><a href="analysis"><i class="fa-solid fa-chart-line"></i> Analysis</a></dd>
+        </dl>
+        <ul class="membership">
+            <li><a href="#" onclick="('로그인')"><i class="fa-solid fa-right-to-bracket"></i> 로그인</a></li>
+            <li><a href="#" onclick="('회원가입')"><i class="fa-solid fa-user-plus"></i> 회원가입</a></li>
+        </ul>
+        <!-- #### 02-1. 좌측 고정 업종별 아이콘 메뉴 끝 -->
+    </div>
+    <!-- ####### 02. LNB END ########## -->
+    <hr class="skip"/>
+    <!-- ####### 03. CONTENTS START ####### -->
+    <section class="contents_wrap">
+        <div class="main_wrap">
+            <div class="main_left_padding"></div>
+            <div class="main_contents_center">
+                <ol class="category_main">
+                    <li class="active"><a href=""><i class="fa-solid fa-map-location-dot"></i> 관광</a></li>
+                    <li><a href=""><i class="fa-solid fa-landmark"></i> 전시</a></li>
+                    <li><a href=""><i class="fa-solid fa-mountain-sun"></i> 자연</a></li>
+                    <li><a href=""><i class="fa-solid fa-person-hiking"></i> 레저</a></li>
+                    <li><a href=""><i class="fa-brands fa-shopify"></i> 쇼핑</a></li>
+                    <li><a href=""><i class="fa-solid fa-utensils"></i> 음식</a></li>
+                    <li><a href=""><i class="fa-solid fa-bed"></i> 숙박</a></li>
+                </ol>
+                <dl class="ai_card_skin a_type">
+                    <dt class="header">INVITATION</dt>
+                    <dd class="body">
+                        <dl class="ai_card design">
+                            <dt class="header">
+                                <h2>
+                                    <label>
+                                        <b>제 목</b><input type="text" placeholder="원하시는 모임명을 적어주세요." id="" value="동인천/차이나타운/짜파게티/회식">
+                                    </label>
+                                </h2>
+                                <div class="form_info"><!-- 연관 키워드 10개 -->
+                                    <div class="date">
+                                        <label><b>모인날짜</b><input type="date" value="2023-08-21"></label>
+                                        <label><b>모임시간</b><input type="time" value=""></label>
+                                        <label><b>참가인원</b><input type="text" value=""> </label>
+                                    </div>
+                                    <div class="memo"><label><b>모임내용</b><textarea class="card_memo" name="" rows="3" vlaue="" placeholder="모임에 대한 상세내용을 적어 주세요."></textarea></label></div>
+                                </div>
+                            </dt>
+                            <div class="card_map_wrap"><div id="map"></div></div>
+                            <script>
+                                /* 지도 관련 스크립트*/
+
+                                var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                                    mapOption = {
+                                        /* 전국 지도*/
+                                        // center: new kakao.maps.LatLng(36.01683146793617, 129.42603381793853), // 지도의 중심좌표
+                                        // level: 13 // 지도의 확대 레벨
+
+                                        /* 인천으로만 타겟을 줄인 지도*/
+                                        center: new kakao.maps.LatLng(37.45139514881181, 126.74155431191699), // 지도의 중심좌표
+                                        level: 8 // 지도의 확대 레벨
+                                    };
+                                // 지도를 생성합니다
+                                var map = new kakao.maps.Map(mapContainer, mapOption);
+                            </script>
+                            <dd class="body">
+                                <!-- 대안 장소 선택_01: 업체 리스트 -->
+                                <div class="card_list">
+                                    <ul class="summary_card">
+                                        <li class="subject">
+                                            <b>강화 갑곶돈</b>
+                                            <span class="category"><b class="depth_1">관광</b><b class="depth_2">역사문화</b></span>
+                                        </li>
+                                        <li class="thumb"><img src="https://minio.nculture.org/amsweb-opt/multimedia_assets/77/85267/84965/c/168_%EA%B0%95%ED%99%94-%EA%B0%91%EA%B3%B6%EB%82%98%EB%A3%A8_%EA%B0%91%EA%B3%B6%EB%8F%88%EB%8C%80-%EC%A0%84%EA%B2%BD_%EB%AC%B8%ED%99%94%EC%9E%AC%EC%B2%AD_%EC%A0%9C1%EC%9C%A0%ED%98%95-medium-size.jpg" alt="돈비어천가"></li>
+                                        <li>인천 강화군 강화읍 해안동로1366번길 18</li>
+                                        <li>09:00~18:00</li>
+                                        <li>주차시설 : 있음 (무료)</li>
+                                        <li class="tel">032-930-1234
+                                            <a href="#" class="place_info_layer item_1">상세정보</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="card_list">
+                                    <ul class="summary_card">
+                                        <li class="subject">
+                                            <b>강화 석수문</b>
+                                            <span class="category"><b class="depth_1">관광</b><b class="depth_2">역사문화</b></span>
+                                        </li>
+                                        <li class="thumb"><img src="http://tong.visitkorea.or.kr/cms/resource/72/2512572_image2_1.jpg" alt="돈비어천가"></li>
+                                        <li>인천 강화군 강화읍 고비고개로19번길 12</li>
+                                        <li>00:00~24:00</li>
+                                        <li>주차시설 : 있음 (무료)</li>
+                                        <li class="tel">032-930-1234
+                                            <a href="#" class="place_info_layer item_2">상세정보</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="card_list">
+                                    <ul class="summary_card">
+                                        <li class="subject">
+                                            <b>용흥궁</b>
+                                            <span class="category"><b class="depth_1">관광</b><b class="depth_2">역사문화</b></span>
+                                        </li>
+                                        <li class="thumb"><img src="http://post.phinf.naver.net/20160420_85/14611369123561fx3n_JPEG/IjHZ0iPSsrLaUoV_7os8shoMqY2A.jpg" alt="돈비어천가"></li>
+                                        <li>인천 강화군 강화읍 동문안길21번길 16-1</li>
+                                        <li>09:00~18:00</li>
+                                        <li>주차시설 : 있음 (30분 무료)</li>
+                                        <li class="tel">032-930-1234
+                                            <a href="#" class="place_info_layer item_3">상세정보</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </dd>
+                         </dl>
+                    </dd>
+                    <dd class="footer">Party People</dd>
+                </dl>
+            </div>
+        </div>
+    </section>
+    <!-- ####### 03. CONTENTS END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 04. FOOTER START ####### -->
+    <!-- ####### 04. FOOTER START ####### -->
+    <div class="footer_wrap">
+        <footer>
+            <p class="copyright">  © 2023 Party People.</p>
+        </footer>
+    </div>
+    <!-- ####### 04. FOOTER END ####### -->
+</div>
+</body>
+</html>

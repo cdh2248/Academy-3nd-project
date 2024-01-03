@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test요</title>
+</head>
+<style>
+  #capture {
+    background-color: #90ee90;
+    width: 500px;
+    height: 300px;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  #text {
+    color: #000000;
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+<body>
+
+    <div id="capture">
+      <p id="text">html2canvas 사용해보기</p>
+    </div>
+    <button id="downloadButton">다운로드</button>
+    <script>
+
+      let captureDiv = document.getElementById('capture');
+      let downloadButton = document.getElementById('downloadButton');
+
+      downloadButton.addEventListener('click', () => {
+        html2canvas(captureDiv).then(canvas => {
+          saveImg(canvas.toDataURL('image/jpg'), 'your_card.jpg');
+        });
+      });
+
+      const saveImg = (uri, filename) => {
+        let link = document.createElement('a');
+
+        document.body.appendChild(link);
+
+        link.href = uri;
+        link.download = filename;
+        link.click();
+
+        document.body.removeChild(link);
+      };
+    </script>
+</body>
+</html>

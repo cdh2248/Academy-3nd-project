@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="ALL"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <title>MY PAGE > PARTY PEOPLE</title>
+  <meta name="Description" content="인천시 다양한 모임주제에 맞는(회식/데이트/동호회) AI추천 카테고리에 대한 나만의 초대카드를 만들어보세요."/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0.1,maximum-scale=5.0,user-scalable=yes" />
+  <link rel="stylesheet" type="text/css" href="../css/reset.css" th:href="@{/css/testyo.css}" >
+<!--  <link rel="stylesheet" type="text/css" href="../css/ck2.css">-->
+  <link rel="stylesheet" type="text/css" href="../css/reset.css" >
+  <link rel="stylesheet" type="text/css" href="../css/layout.css" >
+  <link rel="stylesheet" type="text/css" href="../css/card.css" >
+  <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3fa5806dfe291fb3622cf85fca14b017&libraries=services,clusterer,drawing"></script>
+  <script src="../js/jquery.js"></script>
+  <!--구글 차트 관련 스크립트-->
+  <script src="//kit.fontawesome.com/56b5cc4bd2.js" crossorigin="anonymous"></script><!-- 폰트어썸(아이콘 폰트) 사용 인증된 링크 -->
+  <script src="../js/jquery-ui-1.10.4.custom.min.js"></script>
+</head>
+<body>
+<div class="container invite mypage">
+  <!-- 모달 레이어 : 모임카드 미리보기 상세페이지 정보 -->
+  <div class="modal_layer_wrap">
+    <div class="layer_box"></div>
+  </div>
+  <!-- ####### 01. HEADER START ####### -->
+  <div class="header_wrap" th:insert="~{insert/header_wrap}"></div>
+  <!-- ####### 01. HEADER END ####### -->
+  <hr class="skip"/>
+  <!-- ####### 02. LNB START ######### -->
+  <div class="lnb" th:if="${client eq null}" th:insert="~{insert/lnb_wrap}"></div>
+  <div class="lnb" th:if="${client != null}" th:insert="~{insert/lnb_wrap_login}"></div>
+  <!-- ####### 02. LNB END ########## -->
+  <hr class="skip"/>
+  <!-- ####### 03. CONTENTS START ####### -->
+  <section class="contents_wrap">
+
+    <!-- #### 03-1.우측 본문 영역 시작 -->
+    <div class="left_contents">
+      <div class="left_contents_padding_left"></div>
+      <div class="left_contents_center">
+        <div class="page_title">
+          <h1><!-- ## 페이지 타이틀 ##  좌측 메뉴 .active 되어 있는 메뉴명 제이쿼리 클론하여 가져옴 --> </h1>
+          <!-- ## 페이지 네비 경로 ## -->
+          <span class="page_path"><!-- 페이지 네비게이션 제이쿼리 액티브 메뉴 복사 --></span>
+        </div>
+        <div class="page_contents">
+          <!-- 페이지 삽입내용 부분 -->
+
+          <div class="card_list_wrap" style="width: 800px; height: 700px; margin: 0 auto; "
+          th:if="${category2 != null}" th:each="card, iterStat : ${category2}">
+            <!-- 추천(조합) 모임카드 #.01 시작 -->
+<!--            <b th:class="'depth_1 ' + ${colors[iterStat.count - 1]}"  th:text="${iterStat.count}" >1</b>-->
+            <dl class="ai_card design" style="background:#232323 url('../images/bg_06.jpg') no-repeat top; background-size: 100%; border-radius:15px; padding-top: 30px !important;">
+              <dt class="header" style="font-size: 30px; font-weight: bold; color: white; text-align: center"
+                th:text="|${pageMaker.getPage().getPageNum()}번 초대장|">INVITATION</dt>
+              <br>
+<!--              <b th:class="'depth_1'">1</b>-->
+              <dt class="header" style="background:white; padding:10px; border-radius:5px; text-align: left">
+                <h2>
+                  <label>
+                    <b>제 목</b><input type="text" placeholder="원하시는 모임명을 적어주세요." id="goddem" th:value="${card.title}"  value="동인천/차이나타운/짜파게티/회식">
+                  </label>
+                </h2>
+                <div class="form_info">
+                  <div class="date">
+                    <label><b>모임날짜</b><input type="date" value="2023-08-21" th:value="${card.targetDate}"></label>
+                    <label><b>모임시간</b><input type="time" value="" th:value="${card.targetTime}"></label>
+                    <label><b>참가인원</b><input type="text" value="" th:value="${card.meetingParticipants}"> </label>
+                  </div>
+                  <div class="memo"><label><b>모임내용</b><textarea class="card_memo" name="" rows="3" value="" placeholder="모임에 대한 상세내용을 적어 주세요." th:text="${card.meetingContent}"></textarea></label></div>
+                </div>
+              </dt>
+              <br>
+
+              <dd class="body" style="background:white; padding:10px; border-radius:5px">
+
+
+                <!-- 대안 장소 선택_01: 업체 리스트 -->
+                <div class="card_list" th:each="place, iterStat : ${card.placeList}">
+                  <ul class="summary_card">
+                    <li class="subject">
+                      <b th:text="${place.getTitle()}">돈비어천가c</b>
+                      <span class="category"><b class="depth_1"  th:text="${place.getCategory()}">음식</b><b class="depth_2"  th:text="${place.getSmallCategory()}">한식</b></span>
+                    </li>
+                    <li class="thumb">
+                      <img th:src="${place.getImageAdd1()}" alt="돈비어천가">
+
+                    </li>
+                    <li th:each="p:${place.viewList()}" th:if="p !=null"  th:text="${p}"></li>
+                    <li class="tel" th:text="${place.getTel()}">032-930-1234 </li>
+                    <a href="#" th:class="|place_info_layer item_${iterStat.count}|">상세정보</a>
+                    <!-- 업체 상세 정보 레이어 -->
+                    <!--                                            <script th:inline="javascript"> placeId = [[${place.getId}]]</script>-->
+                    <div th:class="|layer_contents item_${iterStat.count}|" th:insert="~{insert/place_info}"></div>
+
+                  </ul>
+                </div>
+              </dd>
+
+            </dl>
+          </div>
+
+                      <div class="paging">
+                        <a th:if="${pageMaker.isPrev()}" th:href="@{/client/myCard(pageNum = ${pageMaker.getStartPage-1})}" th:text="이전" class="btn_first"></a>
+                        <th:block th:each="pageNum: ${#numbers.sequence(pageMaker.getStartPage(),pageMaker.getEndPage())}">
+                          <a th:if="${pageNum != pageMaker.getPage().getPageNum()}" th:href="@{/client/myCard(pageNum = ${pageNum})}" th:text="${pageNum}"></a>
+                          <strong th:if="${pageNum == pageMaker.getPage().getPageNum()}" th:text="${pageNum}" class="active"></strong>
+                        </th:block>
+                        <a th:if="${pageMaker.isNext()}" th:href="@{/client/myCard(pageNum = ${pageMaker.getEndPage()+1})}" th:text="다음" class="btn_last"></a>
+<!--                          <a href="#" class="btn_first"></a>-->
+<!--                          <a href="#" class="btn_prev"></a>-->
+<!--                          <a href="#" class="active">1</a>-->
+<!--                          <a href="#">2</a>-->
+<!--                          <a href="#">3</a>-->
+<!--                          <a href="#">4</a>-->
+<!--                          <a href="#">5</a>-->
+<!--                          <a href="#" class="btn_next"></a>-->
+<!--                          <a href="#" class="btn_last"></a>-->
+                      </div>
+
+
+          <!-- 페이지 삽입내용 끝 -->
+        </div>
+      </div>
+    </div>
+    <!-- #### 03-1.우측 본문 영역 끝 -->
+  </section>
+  <!-- ####### 03. CONTENTS END ####### -->
+  <hr class="skip"/>
+  <!-- ####### 04. FOOTER START ####### -->
+
+  <div class="footer_wrap" th:insert="~{insert/footer_wrap}"></div>
+
+  <!-- ####### 04. FOOTER END ####### -->
+</div>
+</body>
+</html>

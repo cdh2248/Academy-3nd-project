@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="party.people.repository.InviteCard.InviteCardMapper">
+
+
+    <!-- 회원 가입 -->
+    <insert id="saveCard" useGeneratedKeys="true" keyProperty="x">
+        <selectKey keyProperty="x" resultType="java.lang.Long" order="BEFORE">
+            SELECT INViTED.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO INVITE_CARD2 (SEQUENCEID, CLIENT_ID, PLACE_ID_1, PLACE_ID_2, PLACE_ID_3,  TITLE    ,TAGET_DATE ,TAGET_TIME,    MEETING_CONTENT,  MEETING_PARTICIPANTS,  CARD_SKIN)
+        VALUES (#{x}, #{CLIENT_ID, jdbcType=VARCHAR}, #{PLACE_ID_1,jdbcType=INTEGER},#{PLACE_ID_2,jdbcType=INTEGER}, #{PLACE_ID_3,jdbcType=INTEGER}, #{TITLE, jdbcType=VARCHAR},
+        #{TAGET_DATE, jdbcType=DATE}, #{TAGET_TIME, jdbcType=VARCHAR}, #{MEETING_CONTENT, jdbcType=VARCHAR},
+        #{MEETING_PARTICIPANTS, jdbcType=VARCHAR}, #{CARD_SKIN, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 아이디로 전체 불러오기 -->
+    <select id="loadById" resultType="inviteCard">
+        select CLIENT_ID, PLACE_ID_1, PLACE_ID_2, PLACE_ID_3,  TITLE    ,TAGET_DATE ,TAGET_TIME,    MEETING_CONTENT,  MEETING_PARTICIPANTS,  CARD_SKIN
+        from invite_card2
+        where client_id = #{clientId}
+    </select>
+
+
+
+
+</mapper>

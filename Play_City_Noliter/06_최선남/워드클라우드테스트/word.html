@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>테스트</title>
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
+</head>
+<body>
+<script>
+  anychart.onDocumentReady(function () {
+    var data = [
+      {
+        "x": "IT",
+        "value": 590000000,
+        category: "Sino-Tibetan"
+      },
+      {
+        "x": "Python",
+        "value": 283000000,
+        category: "Indo-European"
+      },
+      {
+        "x": "소프트웨어",
+        "value": 544000000,
+        category: "Indo-European"
+      },
+      {
+        "x": "JAVA",
+        "value": 527000000,
+        category: "Indo-European"
+      }, {
+        "x": "C++",
+        "value": 422000000,
+        category: "Afro-Asiatic"
+      }, {
+        "x": "HTML",
+        "value": 620000000,
+        category: "Afro-Asiatic"
+      }, {
+            "x": "Spring",
+            "value": 720000000,
+            category: "Afro-Asiatic"
+        }
+    ];
+    var chart = anychart.tagCloud(data);
+    chart.angles([0]);
+    chart.container("container");
+    // chart.getCredits().setEnabled(false);
+    chart.draw();
+  });
+</script>
+<div class="chart-area">
+  <div id="container" style="width:100%; height:auto;"></div>
+</div>
+
+</body>
+</html>

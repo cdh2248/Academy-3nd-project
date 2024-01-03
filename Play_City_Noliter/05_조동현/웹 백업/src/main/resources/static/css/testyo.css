@@ -1,0 +1,10 @@
+.clear-button {
+    position: absolute;
+    right: 5px;  /* X 버튼의 우측 간격 조절 */
+    top: 50%;   /* X 버튼의 수직 정렬 */
+    transform: translateY(-50%);  /* 수직 정렬을 위한 변환 */
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none; /* 초기에는 숨김 처리 */
+}

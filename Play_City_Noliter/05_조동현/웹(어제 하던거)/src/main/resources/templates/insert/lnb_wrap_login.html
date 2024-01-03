@@ -1,0 +1,50 @@
+<div class="lnb_wrap">
+    <!-- #### 02-1. 좌측 고정 업종별 아이콘 메뉴 시작 -->
+    <dl class="fixed_quick_menu">
+        <!--        <dt title="Party Peaple(인천)"><i class="fa-solid fa-map-location-dot"></i>인천</dt>-->
+        <dd class="place active"><a href="place"><i class="fa-solid fa-map-location-dot"></i> Place</a></dd>
+        <dd><a href="category"><i class="fa-regular fa-compass"></i> Category</a></dd>
+        <dd class="invite"><a href="invite"><i class="fa-solid fa-people-group"></i> Invite</a></dd>
+        <dd class="analysis"><a href="analysis"><i class="fa-solid fa-chart-line"></i> Analysis</a></dd>
+    </dl>
+    <ul class="membership">
+        <li><a href="client/logout"><i class="fa-solid fa-right-to-bracket"></i> 로그아웃</a></li>
+        <li><a href="client/my_page"><i class="fa-solid fa-user-plus"></i> 내 페이지</a></li>
+    </ul>
+    <!-- #### 02-1. 좌측 고정 업종별 아이콘 메뉴 끝 -->
+    <hr class="skip"/>
+    <!-- #### 02-2. 좌측 on/off 페이지 서브 메뉴 노출 시작 -->
+<!--    <script>-->
+<!--        $(function(){-->
+<!--            // 업종별 대메뉴 활성화(class="active") 메뉴버튼 처리-->
+<!--            $("nav ul li:nth-child(1) a").addClass("active");-->
+<!--            // 사용자가 선택한 메뉴 활성화(class="active")에 따른 페이지 메뉴명 제이쿼리 변경 처리-->
+<!--            $(".fixed_quick_menu dd.active a").clone().prependTo(".lnb h2");-->
+<!--            $(".sub_menu_list li a.active").clone().prependTo(".right_contents h1");-->
+<!--            // $(".right_contents h1 span").appendTo("분석");-->
+<!--            // 페이지 네비게이션 경로 처리-->
+<!--            $(".fixed_quick_menu dd.active a").clone().appendTo(".page_path");-->
+<!--            $(".sub_menu_list li a.active span").clone().appendTo(".page_path");-->
+<!--            $(".right_contents.area ul.summary_card input[type=checkbox]").attr(disabled);-->
+<!--            // 체크 박스 비활성화-->
+<!--            //$(".right_contents.area ul.summary_card input[type=checkbox]").prop("disabled",true);-->
+
+<!--        });-->
+<!--    </script>-->
+    <!-- lnb 내부 lnb-->
+    <div class="lnb" th:if="${category eq 'place'}" th:insert="~{insert/place_lnb}"></div>
+    <div class="lnb" th:if="${category eq 'invite'}" th:insert="~{insert/invite_lnb}"></div>
+    <div class="lnb" th:if="${category eq 'analysis'}" th:insert="~{insert/analysis_lnb}"></div>
+    <!-- #### 02-2 좌측 on/off 페이지 서브 메뉴 노출 끝 -->
+</div>
+
+<script th:inline="javascript">
+    var category = [[${category}]]
+    console.log(category)
+    function activeCategory(category){
+        $('dd').removeClass('active');
+        $('dd.'+category).addClass('active')
+    }
+    activeCategory(category)
+
+</script>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="ALL"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>브랜드별 프랜차이즈 가맹현황</title>
+    <meta name="Description" content="브랜드별 외식 프랜차이즈 통계에 대한 다양한 정보를 제공합니다."/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0.1,maximum-scale=5.0,user-scalable=yes" />
+    <link rel="stylesheet" type="text/css" href="css/reset.css" >
+    <link rel="stylesheet" type="text/css" href="css/layout.css" >
+    <link rel="stylesheet" type="text/css" href="css/jquery.stickytable.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <script src="/js/jquery.js"></script>
+    <script src="//code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="/js/jquery-ui.js"></script><!--layout 리사이즈-->
+    <script src="//cdn.jsdelivr.net/npm/chart.js"></script> <!-- js chart 설치 -->
+    <script src="/js/jquery.stickytable.js"></script><!-- 고정 테이블 -->
+    <script src="//kit.fontawesome.com/56b5cc4bd2.js" crossorigin="anonymous"></script><!-- 폰트어썸(아이콘 폰트) 사용 인증된 링크 -->
+    <!--    <script src="js/jquery-ui-1.10.4.custom.min.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body class="brand">
+<div class="container">
+    <!-- ####### 01. HEADER START ####### -->
+    <div class="header_wrap" th:insert="~{header.html}"></div>
+    <!-- ####### 01. HEADER END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 02. LNB START ######### -->
+    <div class="lnb_wrap">
+        <!-- #### 02-1. 좌측 고정 업종별 아이콘 메뉴 시작 -->
+        <dl class="fixed_quick_menu" th:insert="~{fixed_lnb.html}"></dl>
+        <hr class="skip"/>
+        <!-- #### 02-2. 좌측 on/off 페이지 서브 메뉴 노출 시작 -->
+        <div class="lnb" th:insert="~{brand_lnb.html}">
+            <div class="btn_lnb_open"><a href="#" class="fa fa-chevron-left"></a></div>
+            <!-- 02-2-2.페이지 컨텐츠 서브 메뉴 노출 끝 -->
+        </div>
+        <!-- #### 02-2 좌측 on/off 페이지 서브 메뉴 노출 끝 -->
+    </div>
+    <!-- ####### 02. LNB END ########## -->
+    <hr class="skip"/>
+    <!-- ####### 03. CONTENTS START ####### -->
+    <section class="contents_wrap">
+        <!-- #### 03-1.우측 본문 영역 시작 -->
+        <div class="right_contents">
+            <!-- ######## 각 페이지에 해당 하는 내용 HTML을 넣어주세요.########### -->
+            <script>
+                $(function(){
+                    // 업종별 대메뉴 활성화(class="active") 메뉴버튼 처리
+                    $("nav ul li:nth-child(2) a").addClass("active");
+                    // 사용자가 선택한 메뉴 활성화(class="active")에 따른 페이지 메뉴명 제이쿼리 변경 처리
+                    $(".sub_menu_list li a.active").clone().appendTo(".right_contents h1");
+                    // $(".right_contents h1 span").appendTo("분석");
+                    // 페이지 네비게이션 경로 처리
+                    $("nav ul li a.active").clone().appendTo(".page_path");
+                    $(".sub_menu_list li a.active span").clone().appendTo(".page_path");
+                });
+            </script>
+            <!-- ## 페이지 타이틀 ## -->
+            <h1><!-- 좌측 메뉴 .active 되어 있는 메뉴명 제이쿼리 클론하여 가져옴 --> </h1>
+            <!-- ## 페이지 네비 경로 ## -->
+            <span class="page_path"><!-- 페이지 네비게이션 제이쿼리 액티브 메뉴 복사 --></span>
+            <div class="graph_wrap">
+                <div class="brand_pie_chart">
+                    <div class="title">
+                        <h2>2022년 외식업 매출상위 브랜드</h2>
+                        <span>출처 : 공정거래위원회</span>
+                    </div>
+                    <!--2022년 기준 &ndash;&gt; 한식 업종 브랜드 상위 10개 업체 점유율 챠트 노출해주세요!-->
+
+
+                    <!--가맹정보_브랜드별_가맹점_현황_제공_서비스-->
+                    <div style="width:auto;height:auto;">
+
+
+                        <!-- js chart  차트 넣는 부분! -->
+                        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+
+                        <div style="width:500px;height:500px; margin: 0 auto">
+                            <canvas id="myChart" width="500" height="300" style="margin-top: 8em"></canvas>
+                            <div id="customLegend" style="margin-top: 10px;"></div>
+                        </div>
+
+
+
+                        <script th:inline="javascript">
+
+
+                            $(document).ready(function (){
+                                var socket = new WebSocket("ws://localhost:8060");
+                                var labels = [];  // X축 레이블
+                                var datasets = [];  // 데이터셋
+                                const ctx = document.getElementById('myChart').getContext('2d');
+                                var myChart = new Chart(ctx, {
+                                    type: 'line', // type : bar, bubble, doughnut, line, polarArea, radar, scatter, pie
+                                    data: {
+                                        labels: labels,
+                                        datasets: datasets
+                                    }
+                                    // options: {
+                                    //     scales: {
+                                    //         y: {
+                                    //             beginAtZero: true
+                                    //         }
+                                    //     }
+                                    // }
+                                });
+                                socket.onmessage = function (event) {
+                                    var data = JSON.parse(event.data);  // 받은 데이터 파싱
+                                    console.log(data)
+                                    var time = new Date().toLocaleTimeString();  // 현재 시간
+
+                                    // 데이터 업데이트
+                                    labels.push(time);
+                                    for (var i = 0; i < data.length; i++) {
+                                        var company = data[i].브랜드명;
+                                        var price = data[i].평균매출금액;
+
+                                        // 해당 회사 데이터셋이 존재하지 않으면 생성
+                                        if (!datasets[i]) {
+                                            datasets[i] = {
+                                                label: company,
+                                                data: [],
+                                                borderColor: getRandomColor(),
+                                                borderWidth: 1,
+                                                fill: false
+                                            };
+                                        }
+
+                                        // 데이터셋에 데이터 추가
+                                        datasets[i].data.push(price);
+                                    }
+
+                                    // 최대 10개의 데이터 유지
+                                    if (labels.length > 10) {
+                                        labels.shift();  // 가장 오래된 데이터 제거
+                                        for (var i = 0; i < datasets.length; i++) {
+                                            datasets[i].data.shift();  // 가장 오래된 데이터 제거
+                                        }
+                                    }
+
+                                    // 차트 업데이트
+                                    myChart.update();
+                                };
+
+                                // 랜덤한 색상 생성
+                                function getRandomColor() {
+                                    var letters = '0123456789ABCDEF';
+                                    var color = '#';
+                                    for (var i = 0; i < 6; i++) {
+                                        color += letters[Math.floor(Math.random() * 16)];
+                                    }
+                                    return color;
+                                }
+                            });
+
+
+
+
+                        </script>
+                        <br>
+                    </div>
+
+
+<!--------------------------------------------------------------->
+                </div>
+                <div class="year_line_chart">
+                    <div class="title">
+                        <h2>2021년 외식업 매출상위 브랜드</h2>
+                        <span>출처 : 공정거래위원회</span>
+                    </div>
+
+
+
+                        <div style="width:auto;height:auto;">
+                            <!-- js chart  차트 넣는 부분! -->
+                            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                            <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+
+                            <div style="width:500px;height:500px;">
+                                <canvas id="myChart2"></canvas>
+                            </div>
+
+
+                            <script th:inline="javascript">
+                                var top10List2 = [[${top10List2}]];
+                                console.log(top10List2)
+
+                                const ctx2 = document.getElementById('myChart2').getContext('2d');
+
+                                var myChart2 = new Chart(ctx2, {
+                                    type: 'radar', // type : bar, bubble, doughnut, line, polarArea, radar, scatter, pie
+                                    data: {
+                                        labels: [top10List2[2].brandName, top10List2[1].brandName, top10List2[0].brandName, top10List2[6].brandName, top10List2[9].brandName, top10List2[5].brandName, top10List2[3].brandName,top10List2[7].brandName,top10List2[8].brandName,top10List2[4].brandName],
+
+                                        <!-- 코드 수정-->
+                                        // labels: top10List.map(brand => brand.brandName),
+
+
+
+                                        datasets: [{
+                                            label: '평균매출금액',
+                                            data: [top10List2[2].avgSales, top10List2[1].avgSales,top10List2[0].avgSales,top10List2[6].avgSales,top10List2[9].avgSales,top10List2[5].avgSales,top10List2[3].avgSales,top10List2[7].avgSales,top10List2[8].avgSales,top10List2[4].avgSales],
+                                            borderWidth: 1,
+                                            backgroundColor: [
+                                                'rgba(252, 158, 50, 0.4)',
+                                                'rgba(255, 159, 64, 0.7)',
+                                                'rgba(255, 205, 86, 0.7)',
+                                                'rgba(75, 192, 192, 0.7)',
+                                                'rgba(54, 162, 235, 0.7)',
+                                                'rgba(153, 102, 255, 0.7)',
+                                                'rgba(201, 203, 207, 0.7)',
+                                                'rgba(160, 242, 207, 0.7)',
+                                                'rgba(201, 173, 54, 0.7)',
+                                                'rgba(147, 170, 207, 0.7)'
+                                            ],
+                                        }]
+                                    },
+                                    // options: {
+                                    //     scales: {
+                                    //         y: {
+                                    //             beginAtZero: true
+                                    //         }
+                                    //     }
+                                    // }
+                                });
+                            </script>
+
+
+
+
+
+
+
+
+
+
+<!--                            <script th:inline="javascript">-->
+
+
+<!--                                const ctx2 = document.getElementById('myChart2').getContext('2d');-->
+
+
+<!--                                    var chart2 = new Chart(ctx2, {-->
+
+<!--                                        // The type of chart we want to create-->
+<!--                                        type: 'bar',-->
+
+<!--                                        // The data for our dataset-->
+<!--                                        data: {-->
+<!--                                            labels: .map(brand => brand.brandName),-->
+<!--                                            datasets: [{-->
+<!--                                                label: '신규가맹점수',-->
+<!--                                                type : 'bar', // 'bar' type, 전체 타입과 같다면 생략가능-->
+<!--                                                backgroundColor: 'rgba(235, 143, 52, 0.6)',-->
+<!--                                                borderColor: 'rgba(235, 143, 52, 0.6)',-->
+<!--                                                data: top10List.map(brand => brand.newBrandNum),-->
+<!--                                            }, {-->
+<!--                                                label: '계약종료수',-->
+<!--                                                type: 'line',         // 'line' type-->
+<!--                                                fill: false,         // 채우기 없음-->
+<!--                                                lineTension: 0.1,  // 0이면 꺾은선 그래프, 숫자가 높을수록 둥글해짐-->
+<!--                                                pointRadius: 0,    // 각 지점에 포인트 주지 않음-->
+<!--                                                backgroundColor: 'rgba(52, 183, 235, 0.6)',-->
+<!--                                                borderColor: 'rgba(52, 183, 235, 0.6)',-->
+<!--                                                data: top10List.map(brand => brand.endCount)-->
+<!--                                            }]-->
+<!--                                            // }, {-->
+<!--                                            //     label: '계약해지수',-->
+<!--                                            //     type : 'line',-->
+<!--                                            //     fill : false,-->
+<!--                                            //     lineTension : 0.2,-->
+<!--                                            //     pointRadius : 0,-->
+<!--                                            //     backgroundColor: 'rgba(205, 171, 35, 0.6)',-->
+<!--                                            //     borderColor: 'rgba(205, 171, 35, 0.6)',-->
+<!--                                            //     data: top10List.map(brand => brand.cancelCount)-->
+<!--                                            // }]-->
+<!--                                        },-->
+
+<!--                                        // Configuration options-->
+<!--                                        options: {-->
+<!--                                            legend: {-->
+<!--                                                labels: {-->
+<!--                                                    fontColor: 'white' // label color-->
+<!--                                                }-->
+<!--                                            },-->
+
+<!--                                            scales: {-->
+<!--                                                // y축-->
+<!--                                                yAxes: [{-->
+<!--                                                    stacked: true,-->
+<!--                                                    ticks: {-->
+<!--                                                        fontColor: 'white', // y축 폰트 color-->
+<!--                                                    }-->
+<!--                                                }],-->
+<!--                                                // x축-->
+<!--                                                xAxes: [{-->
+<!--                                                    stacked: true,-->
+<!--                                                    ticks: {-->
+<!--                                                        fontColor: 'white', // x축 폰트 color-->
+<!--                                                    }-->
+<!--                                                }]-->
+<!--                                            }-->
+<!--                                        }-->
+
+<!--                                });-->
+
+
+<!--                            </script>-->
+                        </div>
+                    </div>
+            </div>
+
+
+
+
+<!--                    --------------------------------------------------------------->
+
+
+            <!-- 테이블 데이터 영역 시작  -->
+<!--            <div class="table_data_wrap">-->
+<!--                <script>-->
+<!--                    $( function() {-->
+
+<!--                        $( ".td_resizable" ).resizable({  //테이블 리사이즈-->
+<!--                            alsoResize: ".also"-->
+<!--                        });-->
+<!--                        $( ".also" ).resizable();-->
+<!--                    } );-->
+<!--                </script>-->
+<!--                <div class="title">-->
+<!--                    <h2>프랜차이즈 등록업체(2022~2018)</h2>-->
+<!--                    <span>-->
+<!--                        30/3,200(개), 화폐단위(천원)-->
+<!--                        <button class="btn white">더보기</button>-->
+
+<!--                    </span>-->
+<!--                </div>-->
+<!--                <div class="scroll sticky-table sticky-ltr-cells">-->
+<!--                    <div class="table_wrap also">-->
+<!--                        <table class="list_table table-striped table">-->
+<!--                            <caption>외식업 프랜차이즈 가맹점 매출분석</caption>-->
+<!--                            <thead>-->
+<!--                            <tr class="sticky-header">-->
+<!--                                <th class="sticky-cell td_resizable" style="width:30px;">NO</th>-->
+<!--                                <th class="sticky-cell td_resizable" style="width:120px;">프랜차이즈(브랜드명)</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">상세업종</th>-->
+<!--                                <th class="td_resizable" style="width:100px;">가맹정보공개서등록번호</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">기준년도</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">매출금액</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">영업이익</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">가맹금액</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">교육금액</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">보증금액</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">기타금액</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">합계금액</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">인테리어금액</th>-->
+<!--                                <th class="td_resizable" style="width:70px;">지역명</th>-->
+<!--                                <th class="td_resizable" style="width:50px;">가맹점수</th>-->
+<!--                                <th class="td_resizable" style="width:50px;">직영점수</th>-->
+<!--                                <th class="td_resizable" style="width:50px;">전체점포수</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">계약종료수</th>-->
+<!--                                <th class="td_resizable" style="width:60px;">계약해지수</th>-->
+<!--                            </tr>-->
+<!--                            </thead>-->
+<!--                            <tbody>-->
+<!--                            <tr>-->
+<!--                                <td class="sticky-cell">30</td>-->
+<!--                                <td class="sticky-cell"><b>자연나라 한식별곡 청라점</b></td>-->
+<!--                                <td>한식</td>-->
+<!--                                <td class="center">200801000006</td>-->
+<!--                                <td class="center">2022</td>-->
+<!--                                <td>51,000</td>-->
+<!--                                <td class="center">200</td>-->
+<!--                                <td class="center">11,200</td>-->
+<!--                                <td class="center">5,500</td>-->
+<!--                                <td class="center">2,300</td>-->
+<!--                                <td class="center">200</td>-->
+<!--                                <td class="center">19,200</td>-->
+<!--                                <td class="center">30,000</td>-->
+<!--                                <td>인천 광역시</td>-->
+<!--                                <td>321</td>-->
+<!--                                <td>10</td>-->
+<!--                                <td>331</td>-->
+<!--                                <td>0</td>-->
+<!--                                <td>1</td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td class="sticky-cell">29</td>-->
+<!--                                <td class="sticky-cell"><b>자연나라 한식별곡 청라점</b></td>-->
+<!--                                <td>한식</td>-->
+<!--                                <td class="center">200801000006</td>-->
+<!--                                <td class="center">2022</td>-->
+<!--                                <td>51,000</td>-->
+<!--                                <td class="center">200</td>-->
+<!--                                <td class="center">11,200</td>-->
+<!--                                <td class="center">5,500</td>-->
+<!--                                <td class="center">2,300</td>-->
+<!--                                <td class="center">200</td>-->
+<!--                                <td class="center">19,200</td>-->
+<!--                                <td class="center">30,000</td>-->
+<!--                                <td>인천 광역시</td>-->
+<!--                                <td>321</td>-->
+<!--                                <td>10</td>-->
+<!--                                <td>331</td>-->
+<!--                                <td>0</td>-->
+<!--                                <td>1</td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td class="sticky-cell">28</td>-->
+<!--                                <td class="sticky-cell"><b>자연나라 한식별곡 청라점</b></td>-->
+<!--                                <td>한식</td>-->
+<!--                                <td class="center">200801000006</td>-->
+<!--                                <td class="center">2022</td>-->
+<!--                                <td>51,000</td>-->
+<!--                                <td class="center">200</td>-->
+<!--                                <td class="center">11,200</td>-->
+<!--                                <td class="center">5,500</td>-->
+<!--                                <td class="center">2,300</td>-->
+<!--                                <td class="center">200</td>-->
+<!--                                <td class="center">19,200</td>-->
+<!--                                <td class="center">30,000</td>-->
+<!--                                <td>인천 광역시</td>-->
+<!--                                <td>321</td>-->
+<!--                                <td>10</td>-->
+<!--                                <td>331</td>-->
+<!--                                <td>0</td>-->
+<!--                                <td>1</td>-->
+<!--                            </tr>-->
+<!--                            </tbody>-->
+<!--                        </table>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+
+<!--            </div>-->
+            <!-- 테이블 데이터 영역 끝 -->
+            <!-- ######## 각 페이지에 해당 하는 내용 HTML을 넣어주세요.########### -->
+        </div>
+        <!-- #### 03-1.우측 본문 영역 끝 -->
+    </section>
+    <!-- ####### 03. CONTENTS END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 04. FOOTER START ####### -->
+    <div class="footer_wrap" th:insert="~{footer.html}"></div>
+    <!-- ####### 04. FOOTER END ####### -->
+
+</div>
+</body>
+</html>

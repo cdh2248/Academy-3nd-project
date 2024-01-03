@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="ALL"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>INVITE > PARTY PEOPLE</title>
+    <meta name="Description" content="인천시 다양한 모임에 맞는(회식/데이트/동호회) AI추천 모임장소에 대한 나만의 초대카드를 만들어보세요."/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0.1,maximum-scale=5.0,user-scalable=yes" />
+    <link rel="stylesheet" type="text/css" href="../css/reset.css" th:href="@{/css/testyo.css}" >
+    <link rel="stylesheet" type="text/css" href="../css/reset.css" >
+    <link rel="stylesheet" type="text/css" href="../css/layout.css?ver=0.002" >
+    <link rel="stylesheet" type="text/css" href="../css/card.css?ver=0.002" >
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3fa5806dfe291fb3622cf85fca14b017&libraries=services,clusterer,drawing"></script>
+    <script th:inline="javascript" src="../js/jquery.js"></script>
+    <!--구글 차트 관련 스크립트-->
+    <script src="//kit.fontawesome.com/56b5cc4bd2.js" crossorigin="anonymous"></script><!-- 폰트어썸(아이콘 폰트) 사용 인증된 링크 -->
+    <script src="../js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script type="text/javascript" src="../js/html2canvas.js"></script>
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>-->
+</head>
+<body>
+<!--<form>-->
+<form th:action="saveCard"  th:method="post">
+<div class="container invite skin" id = "no">
+    <!-- 모달 레이어 : 모임카드 미리보기 상세페이지 정보 -->
+    <div class="modal_layer_wrap detail">
+        <div class="layer_bg"></div>
+        <div class="layer_box" id ="npo">
+            <a href="#" class="close_layer"><i class="fa-solid fa-xmark"></i></a>
+            <!-- 하단 각각 데이터 복붙 -->
+        </div>
+    </div>
+    <!-- 모달 레이어 : 모임카드 미리보기 클릭시 > 최종 모임카드 디자인 레이어 노출  -->
+    <div class="modal_layer_wrap card"  id="x2">
+        <div class="layer_bg"></div>
+        <div class="layer_box">
+            <a href="#" class="close_layer"><i class="fa-solid fa-xmark"></i></a>
+            <h1><i class="fa-regular fa-square-check"></i> 작성하신 내용을 확인하신 후, 모임카드 이미지를 다운로드하세요.
+                <a href="#" class="download" id="download"><i class="fa-solid fa-download"></i> 초대장(JPG) 다운로드</a>
+                <button th:if="${login!= null}"  type="submit"> 저장하기</button>
+            </h1>
+            <div class="layer_contents" id="x3"></div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+
+        let captureDiv = document.getElementById('x3');
+        let downloadButton = document.getElementById('download');
+        setTimeout(function() {
+            console.log('Works!');
+        }, 3000);
+        downloadButton.addEventListener('click', () => {
+            setTimeout(function () {
+                console.log('Works!');
+            }, 3000);
+            html2canvas(captureDiv,
+                {
+
+                    allowTaint: true,
+                    useCORS: true,// CORS 를 사용하여 시도 하 여 서버에서 이미지 업로드
+                    // imageTimeout: 10000,
+                    // foreignObjectRendering: true
+                    logging: true
+                    // removeContainer: true,
+                })
+            .then(canvas => {
+                saveImg(canvas.toDataURL('image/jpg'), 'your_card.jpg');
+            });
+
+        });
+
+        const saveImg = (uri, filename) => {
+            let link = document.createElement('a');
+
+            document.body.appendChild(link);
+
+            link.href = uri;
+            link.download = filename;
+            link.click();
+
+            document.body.removeChild(link);
+        };
+    </script>
+    <!-- ####### 01. HEADER START ####### -->
+    <div class="header_wrap" th:insert="~{insert/header_wrap}"></div>
+
+    <!-- ####### 01. HEADER END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 02. LNB START ######### -->
+    <div class="lnb" th:if="${client eq null}" th:insert="~{insert/lnb_wrap}"></div>
+    <div class="lnb" th:if="${client != null}" th:insert="~{insert/lnb_wrap_login}"></div>
+
+    <!-- ####### 02. LNB END ########## -->
+    <hr class="skip"/>
+    <!-- ####### 03. CONTENTS START ####### -->
+    <section class="contents_wrap">
+            <!-- ########  페이지마다의 고정 서비스 내용이(예, 지도나 모임카드 수정) 들어갑니다. ########### -->
+            <div class="left_contents">
+                <div class="left_contents_padding_left"></div>
+                <div class="left_contents_center">
+                    <div class="card_list_wrap">
+                        <!-- 추천(조합) 모임카드 #.01 시작 -->
+                        <dl class="ai_card design">
+                            <dt class="header">
+                                <h2>
+                                    <label for="title">
+                                        <b>제 목</b><input id="title" name="title" type="text" placeholder="원하시는 모임명을 적어주세요."  th:value="${keyList}"  value="동인천/차이나타운/짜파게티/회식">
+                                    </label>
+                                </h2>
+                                <div class="form_info">
+                                    <div class="date">
+                                        <label for="targetDate"><b>모임날짜</b><input type="date" id="targetDate" name="targetDate" value=""></label>
+                                        <label for="targetTime"><b>모임시간</b><input type="time" id="targetTime" name="targetTime" value=""></label>
+                                        <label for="meetingParticipants"><b>참가인원</b><input type="text" id="meetingParticipants" name="meetingParticipants" value=""> </label>
+                                    </div>
+
+                                    <script>
+                                        const today = new Date();
+                                        const year = today.getFullYear();
+                                        const month = (today.getMonth() + 1).toString().padStart(2, '0');
+                                        const day = today.getDate().toString().padStart(2, '0');
+                                        const formattedDate = `${year}-${month}-${day}`;
+                                        document.getElementById('targetDate').value = formattedDate;
+
+                                        const now = new Date();
+                                        const hours = now.getHours().toString().padStart(2, '0');
+                                        const minutes = now.getMinutes().toString().padStart(2, '0');
+                                        const formattedTime = `${hours}:${minutes}`;
+
+                                        document.getElementById('targetTime').value = formattedTime;
+                                    </script>
+
+                                    <div class="memo"><label><b>모임내용</b><textarea id="meetingContent" name="meetingContent" class="card_memo"  rows="3" vlaue="" placeholder="모임에 대한 상세내용을 적어 주세요."></textarea></label></div>
+<!--                               <label for="meetContent"> -->
+                                </div>
+                            </dt>
+                            <div class="card_map_wrap">
+                                <div id="map">
+                                    <script th:inline="javascript">
+                                        var maps = /*[[${category2}]]*/ [];
+                                        console.log(maps);
+                                        var allLatLng = [];
+                                        var bounds = new kakao.maps.LatLngBounds();
+                                        for(var i = 0; i < maps.length; i++){
+                                            var df = maps[i];
+                                            allLatLng.push(new kakao.maps.LatLng(df.latitude, df.longitude));
+                                        }
+                                        for(var i = 0; i<allLatLng.length; i++){
+                                            bounds.extend(allLatLng[i]);
+                                        }
+
+                                        var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                                            mapOption = {
+                                                /* 전국 지도*/
+                                                // center: new kakao.maps.LatLng(36.01683146793617, 129.42603381793853), // 지도의 중심좌표
+                                                // level: 13 // 지도의 확대 레벨
+
+                                                /* 인천으로만 타겟을 줄인 지도*/
+                                                center: new kakao.maps.LatLng(37.45139514881181, 126.74155431191699), // 지도의 중심좌표
+                                                level: 8 // 지도의 확대 레벨
+                                            };
+                                        // 지도를 생성합니다
+                                        var map = new kakao.maps.Map(mapContainer, mapOption);
+                                        map.setBounds(bounds);
+                                        var center = map.getCenter();
+
+                                        // 조금만 오른쪽으로 이동시킬 거리 (단위: 미터)
+                                        var offsetX = 0; // 예시로 1000미터 이동
+
+                                        // 새로운 중심 좌표 계산
+                                        var newCenter = new kakao.maps.LatLng(center.getLat(), center.getLng() + (offsetX / 1000)); // 경도에 offset을 더해 새로운 경도 계산
+                                        // // 현재 지도의 레벨을 가져옵니다.
+                                        // var currentLevel = map.getLevel();
+                                        // //
+                                        // // // 현재 레벨에서 1을 더한 값으로 지도의 레벨을 변경합니다.
+                                        // var newLevel = currentLevel + 1;
+                                        //
+                                        // map.setLevel(newLevel, { anchor: newCenter });
+                                        // //
+                                        // // // 지도의 중심 좌표를 새로운 중심 좌표로 설정
+                                        map.setCenter(newCenter);
+
+                                        var placeId= 1;
+                                        /* 지도 관련 스크립트*/
+                                        //var imageSrc = "http://t1.daumcdn.net/localimg/localimages/07/2018/pc/img/marker_spot.png";
+                                        var imageSrc = "images/marker_spot(0).png";
+                                        var imageSize = new kakao.maps.Size(24, 35);
+                                        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+
+                                        for(var a = 0; a < maps.length; a++) {
+
+                                            var row = maps[a]; // 각 세트별 좌표를 df로
+                                            console.log(row);
+                                            // console.log(df);
+
+                                            // 좌표와 다른 정보들을 받아옴
+                                            positions = [];
+
+                                            positions.push({
+                                                id: row.id,
+                                                category: row.category,
+                                                title: row.title,
+                                                latlng: new kakao.maps.LatLng(row.latitude, row.longitude),
+                                            });
+                                            console.log(positions);
+
+                                            for (var i = 0; i < positions.length; i++) {
+                                                var marker = new kakao.maps.Marker({
+                                                    map: map,   // 클러스터러 쓸때는 여기서 맵 지정해서 마커 찍으면 안됌
+                                                    id: positions[i].id,
+                                                    position: positions[i].latlng,
+                                                    title: positions[i].title,
+                                                    category: positions[i].category,
+                                                    image: markerImage // 마커 이미지
+                                                });
+
+                                                // 마우스 올릴때 나오는 정보 추가
+                                                var info = '<h3>' + positions[i].title + '</h3>' + '<p>' + positions[i].category + '</p>';
+                                                // var info = '<h3>' + positions[i].title + '</h3>' + '<p>' + positions[i].opend + '</p>' + '<p>' + positions[i].closed + '</p>';
+                                                var infowindow = new kakao.maps.InfoWindow({
+                                                    content: info
+                                                });
+
+                                                kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
+                                                kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
+                                                kakao.maps.event.addListener(marker, 'click', makeClickListener(positions[i].index));
+                                            }
+
+                                        }
+                                        // 마우스 올리면 정보 나오는 함수
+                                        function makeOverListener(map, marker, infowindow) {
+                                            return function () {
+                                                infowindow.open(map, marker);
+                                            };
+                                        }
+
+                                        // 마우스 내리면 info안나오는 함수
+                                        function makeOutListener(infowindow) {
+                                            return function () {
+                                                infowindow.close();
+                                            };
+                                        }
+
+                                        // 클릭하면 상세페이지로 넘어가는 함수 (아직 미완)
+                                        function makeClickListener(index) {
+                                            return function () {
+                                                window.location.href = "festival/" + index;
+                                            };
+                                        }
+                                    </script>
+                                </div>
+                            </div>
+                            <dd class="body">
+                                <!-- 대안 장소 선택_01: 업체 리스트 -->
+                                <div class="card_list" th:each="place, iterStat : ${category2}">
+                                    <label th:for="|placeId${iterStat.count}|"><input type="hidden" th:id="|placeId${iterStat.count}|" th:name="|placeId${iterStat.count}|" th:value="${place.getId()}"></label>
+                                    <ul class="summary_card">
+                                        <li class="subject">
+                                            <input type="checkbox" checked><b th:text="${place.getTitle()}">돈비어천가</b>
+                                            <span class="category"><b class="depth_1"  th:text="${place.getCategory()}">음식</b><b class="depth_2"  th:text="${place.getSmallCategory()}">한식</b></span>
+                                        </li>
+                                        <li class="thumb">
+                                            <img th:src="${place.getImageAdd1()}" th:alt="${place.getTitle()}">
+                                        </li>
+                                        <li><a href="#" th:class="|place_info_layer item_${iterStat.count}|"><i class="fa-solid fa-magnifying-glass"></i> 상세정보</a></li>
+                                        <li th:each="p:${place.viewList()}" th:if="p !=null"  th:text="${p}"></li>
+                                        <li class="tel" th:text="${place.getTel()}">032-930-1234</li>
+
+                                        <!-- 업체 상세 정보 레이어 -->
+                                        <!--                                            <script th:inline="javascript"> placeId = [[${place.getId}]]</script>-->
+                                        <div th:class="|layer_contents item_${iterStat.count}|" th:insert="~{insert/place_info}"></div>
+                                    </label>
+                                    </ul>
+                                </div>
+                            </dd>
+                            <dd class="footer">
+                                <h3><a href="#" class="confirm"><i class="fa-solid fa-arrow-up-right-from-square"></i> 모임카드 미리보기</a>
+                                    <span>원하시는 모임내용을 작성해주세요. <br> 모임카드 미리보기 후, 이미지(JPG) 다운로드 가능합니다.</span>
+                                </h3>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="left_contents_padding_right"></div>
+            </div>
+            <!-- #### 03-1.우측 본문 영역 시작 -->
+            <div class="right_contents area">
+                <div class="page_title">
+                    <h1>카드 디자인 설정<!-- ## 페이지 타이틀 ##  좌측 메뉴 .active 되어 있는 메뉴명 제이쿼리 클론하여 가져옴 --> </h1>
+                    <!-- ## 페이지 네비 경로 ## -->
+                    <span class="page_path"><!-- 페이지 네비게이션 제이쿼리 액티브 메뉴 복사 --></span>
+                </div>
+                <div class="card_list_wrap">
+                    <!-- 카드 디자인 스킨 #.01 시작 -->
+                    <label for ="a_type">
+                        <div class="radio_skin"><input type="radio" name="card_skin" id="a_type" value="a_type" checked> A </div>
+                        <dl class="ai_card_skin a_type">
+                            <dt class="header">INVITATION</dt>
+                            <dd class="body"></dd>
+                            <dd class="footer">Party People</dd>
+                        </dl>
+                    </label>
+                    <!-- 카드 디자인 스킨 #.01 끝 -->
+                    <!-- 카드 디자인 스킨 #.02 시작 -->
+                    <label for="b_type">
+                        <div class="radio_skin"><input type="radio" id="b_type" value="b_type" name="card_skin" > B </div>
+                        <dl class="ai_card_skin b_type">
+                            <dt class="header">INVITATION</dt>
+                            <dd class="body"></dd>
+                            <dd class="footer">Party People</dd>
+                        </dl>
+                    </label>
+                    <!-- 카드 디자인 스킨 #.02 끝 -->
+                    <!-- 카드 디자인 스킨 #.03 시작 -->
+                    <label for="c_type">
+                        <div class="radio_skin"><input type="radio" id="c_type"  value="c_type" name="card_skin" > C </div>
+                        <dl class="ai_card_skin c_type">
+                            <dt class="header">INVITATION</dt>
+                            <dd class="body"></dd>
+                            <dd class="footer">Party People</dd>
+                        </dl>
+                    </label>
+                    <!-- 카드 디자인 스킨 #.03 끝 -->
+                    <!-- 카드 디자인 스킨 #.04 시작 -->
+                    <label for="d_type">
+                        <div class="radio_skin"><input type="radio" id="d_type"  value="d_type" name="card_skin" > D </div>
+                        <dl class="ai_card_skin d_type">
+                            <dt class="header">INVITATION</dt>
+                            <dd class="body"></dd>
+                            <dd class="footer">Party People</dd>
+                        </dl>
+                    </label>
+                    <!-- 카드 디자인 스킨 #.04 끝 -->
+                    <!-- 카드 디자인 스킨 #.05 시작 -->
+                    <label for="e_type">
+                        <div class="radio_skin"><input type="radio" id="e_type" value="e_type" name="card_skin" > E </div>
+                        <dl class="ai_card_skin e_type">
+                            <dt class="header">INVITATION</dt>
+                            <dd class="body"></dd>
+                            <dd class="footer">Party People</dd>
+                        </dl>
+                    </label>
+                    <!-- 카드 디자인 스킨 #.05 끝 -->
+                    <!-- 카드 디자인 스킨 #.06 시작 -->
+                    <label for="f_type">
+                        <div class="radio_skin"><input type="radio"  id="f_type" value="f_type" name="card_skin"> F </div>
+                        <dl class="ai_card_skin f_type" >
+                            <dt class="header">INVITATION</dt>
+                            <dd class="body"></dd>
+                            <dd class="footer">Party People</dd>
+                        </dl>
+                    </label>
+                    <!-- 카드 디자인 스킨 #.06 끝 -->
+                    <!-- 카드 디자인 스킨 #.06 시작 -->
+                    <label for="g_type">
+                        <div class="radio_skin"><input type="radio" id="g_type" value="g_type" name="card_skin" > G </div>
+                        <dl class="ai_card_skin g_type">
+                            <dt class="header">INVITATION</dt>
+                            <dd class="body"></dd>
+                            <dd class="footer">Party People</dd>
+                        </dl>
+                    </label>
+                    <!-- 카드 디자인 스킨 #.06 끝 -->
+                    <!-- 카드 디자인 스킨 #.06 시작 -->
+                    <label for="h_type">
+                        <div class="radio_skin"><input type="radio" id="h_type"  value="h_type" name="card_skin" > H </div>
+                        <dl class="ai_card_skin h_type">
+                            <dt class="header"></dt>
+                            <dd class="body"></dd>
+                            <dd class="footer">Party People</dd>
+                        </dl>
+                    </label>
+                    <!-- 카드 디자인 스킨 #.06 끝 -->
+                </div>
+            </div>
+
+        <!-- #### 03-1.우측 본문 영역 끝 -->
+    </section>
+    <!-- ####### 03. CONTENTS END ####### -->
+    <hr class="skip"/>
+    <!-- ####### 04. FOOTER START ####### -->
+    <div class="footer_wrap" th:insert="~{insert/footer_wrap}">
+        <!-- ####### 04. FOOTER END ####### -->
+    </div>
+</div>
+</form>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="party.people.repository.client.ClientMapper">
+
+
+    <!-- 회원 가입 -->
+    <insert id="save" useGeneratedKeys="true" keyProperty="sequenceId">
+        <selectKey keyProperty="sequenceId" resultType="java.lang.Long" order="BEFORE">
+            SELECT client_seq.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO client (sequenceid, clientid, password, clientemail, keyword)
+        VALUES (#{sequenceId}, #{clientId}, #{password}, #{clientEmail}, #{keyword})
+    </insert>
+
+    <!-- 전체 검색 -->
+    <select id="findAll" resultType="client">
+        select *
+        from client
+    </select>
+
+    <!-- 시퀀스 아아디로 검색 -->
+    <select id="findBySequenceId" resultType="client">
+        select *
+        from client
+        where sequenceid=#{sequenceId}
+    </select>
+
+    <!-- 고객 아이디로 검색 -->
+    <select id="findByClientId" resultType="client">
+        select *
+        from client
+        where clientid=#{clientId}
+    </select>
+
+    <!-- 고객 이메일로 검색 -->
+    <select id="findByClientEmail" resultType="client">
+        select *
+        from client
+        where clientEmail=#{clientEmail}
+    </select>
+
+    <!-- 비밀번호 검색(아이디, 이메일 이용) -->
+    <select id="findPassword" resultType="client">
+        select *
+        from client
+        where clientid=#{clientId} and clientEmail=#{clientEmail}
+    </select>
+
+    <!-- 내 정보 수정 -->
+    <update id="update">
+        update client
+        set password=#{clientUpdateParam.password2},
+            clientEmail=#{clientUpdateParam.clientEmail},
+            keyword=#{clientUpdateParam.keyword}
+        where clientid = #{clientId}
+    </update>
+
+    <update id="quit">
+        update client
+        set password=null,
+            clientEmail=null,
+            clientid = null
+        where clientid = #{clientId} and password = #{password}
+    </update>
+
+
+</mapper>
