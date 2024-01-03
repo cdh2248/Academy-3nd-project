@@ -1,0 +1,5 @@
+오라클 키고 party(pj3).sql 실행해서 DB생성
+Play_City_noliter -> 스프링부트 -> build.gradle 실행,
+서버는  search_input_db_communication(final).py 실행
+
+02_김충기 -> search_input_db_communication(final).py 
